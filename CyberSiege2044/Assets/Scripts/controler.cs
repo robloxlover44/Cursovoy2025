@@ -8,8 +8,8 @@ public class PlayerController : MonoBehaviour
     public Sprite[] idleSprites;
     public Sprite[] runSprites;
     public float animationSpeed = 0.1f;
-    public Transform cameraTransform; // Ссылка на трансформ камеры
-    public Vector3 cameraOffset; // Смещение камеры относительно персонажа
+    public Transform cameraTransform; 
+    public Vector3 cameraOffset; 
 
     private Vector2 movement;
     private Rigidbody2D rb;
@@ -18,38 +18,40 @@ public class PlayerController : MonoBehaviour
     private int currentFrame;
     private bool isMoving;
 
+    // РџР°СЂР°РјРµС‚СЂС‹ РґР»СЏ РїРѕРєР°С‡РёРІР°РЅРёСЏ РєР°РјРµСЂС‹
+    public float shakeIntensity = 0.2f; 
+    public float shakeSpeed = 5f;
+    private float shakeTimeOffsetX;
+    private float shakeTimeOffsetY;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         mainCamera = Camera.main;
 
-        // Если смещение камеры не задано, вычисляем его
         if (cameraTransform != null && cameraOffset == Vector3.zero)
         {
             cameraOffset = cameraTransform.position - transform.position;
         }
+
+        // Р Р°РЅРґРѕРјРЅС‹Рµ РѕС„С„СЃРµС‚С‹, С‡С‚РѕР±С‹ РґРІРёР¶РµРЅРёСЏ Р±С‹Р»Рё СЂР°Р·РЅС‹РјРё РїРѕ РѕСЃСЏРј
+        shakeTimeOffsetX = Random.value * 10f;
+        shakeTimeOffsetY = Random.value * 10f;
     }
 
     void Update()
     {
-        // Получаем ввод от игрока
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
         isMoving = movement.sqrMagnitude > 0;
 
-        // Анимация
         Animate();
-
-        // Поворот персонажа к курсору
         RotateToMouse();
-
-        // Обновляем позицию камеры
         UpdateCameraPosition();
     }
 
     void FixedUpdate()
     {
-        // Перемещение персонажа
         rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
     }
 
@@ -57,23 +59,11 @@ public class PlayerController : MonoBehaviour
     {
         animationTimer += Time.deltaTime;
 
-        if (isMoving)
+        if (animationTimer >= animationSpeed)
         {
-            if (animationTimer >= animationSpeed)
-            {
-                animationTimer = 0f;
-                currentFrame = (currentFrame + 1) % runSprites.Length;
-                spriteRenderer.sprite = runSprites[currentFrame];
-            }
-        }
-        else
-        {
-            if (animationTimer >= animationSpeed)
-            {
-                animationTimer = 0f;
-                currentFrame = (currentFrame + 1) % idleSprites.Length;
-                spriteRenderer.sprite = idleSprites[currentFrame];
-            }
+            animationTimer = 0f;
+            currentFrame = (currentFrame + 1) % (isMoving ? runSprites.Length : idleSprites.Length);
+            spriteRenderer.sprite = isMoving ? runSprites[currentFrame] : idleSprites[currentFrame];
         }
     }
 
@@ -82,16 +72,22 @@ public class PlayerController : MonoBehaviour
         Vector3 mousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         Vector2 direction = (mousePosition - transform.position).normalized;
         float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        float currentAngle = rb.rotation;
-        float newAngle = Mathf.MoveTowardsAngle(currentAngle, targetAngle, rotationSpeed * Time.deltaTime);
-        rb.rotation = newAngle;
+        rb.rotation = Mathf.MoveTowardsAngle(rb.rotation, targetAngle, rotationSpeed * Time.deltaTime);
     }
 
     void UpdateCameraPosition()
     {
         if (cameraTransform != null)
         {
-            cameraTransform.position = transform.position + cameraOffset;
+            Vector3 shakeOffset = ShakeCamera();
+            cameraTransform.position = transform.position + cameraOffset + shakeOffset;
         }
+    }
+
+    Vector3 ShakeCamera()
+    {
+        float xShake = (Mathf.PerlinNoise(Time.time * shakeSpeed, shakeTimeOffsetX) - 0.5f) * shakeIntensity;
+        float yShake = (Mathf.PerlinNoise(Time.time * shakeSpeed, shakeTimeOffsetY) - 0.5f) * shakeIntensity;
+        return new Vector3(xShake, yShake, 0);
     }
 }
