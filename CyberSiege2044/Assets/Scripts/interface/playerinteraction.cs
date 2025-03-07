@@ -3,16 +3,7 @@ using UnityEngine;
 public class PlayerInteraction : MonoBehaviour
 {
     private IInteractable currentInteractable;
-    public GameObject interactPrompt; // Привязываем спрайт "E" в инспекторе
-    public Vector3 promptOffset = new Vector3(0, 1f, 0); // Смещение над персонажем
-
-    void Start()
-    {
-        if (interactPrompt != null)
-        {
-            interactPrompt.SetActive(false); // Прячем спрайт в начале
-        }
-    }
+    private LineRenderer currentLineRenderer;
 
     void Update()
     {
@@ -22,25 +13,24 @@ public class PlayerInteraction : MonoBehaviour
         }
     }
 
-    void LateUpdate()
-    {
-        // Если спрайт активен, фиксируем его позицию над игроком и убираем поворот
-        if (interactPrompt != null && interactPrompt.activeSelf)
-        {
-            interactPrompt.transform.position = transform.position + promptOffset;
-            interactPrompt.transform.rotation = Quaternion.identity; // Сбрасываем поворот
-        }
-    }
-
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.TryGetComponent(out IInteractable interactable))
         {
             currentInteractable = interactable;
-            Debug.Log("Можно взаимодействовать! Нажми E");
+            Debug.Log("РњРѕР¶РЅРѕ РІР·Р°РёРјРѕРґРµР№СЃС‚РІРѕРІР°С‚СЊ! Р–РјРё E");
 
-            if (interactPrompt != null)
-                interactPrompt.SetActive(true); // Показываем спрайт "E"
+            EdgeCollider2D edgeCollider = other.GetComponent<EdgeCollider2D>();
+            if (edgeCollider != null)
+            {
+                currentLineRenderer = other.GetComponent<LineRenderer>();
+                if (currentLineRenderer == null)
+                {
+                    currentLineRenderer = other.gameObject.AddComponent<LineRenderer>();
+                }
+                ConfigureLineRenderer(currentLineRenderer, edgeCollider, other.transform);
+                currentLineRenderer.enabled = true;
+            }
         }
     }
 
@@ -49,10 +39,31 @@ public class PlayerInteraction : MonoBehaviour
         if (other.TryGetComponent(out IInteractable interactable) && interactable == currentInteractable)
         {
             currentInteractable = null;
-            Debug.Log("Объект вне зоны взаимодействия");
+            Debug.Log("Р’С‹С…РѕРґ РёР· Р·РѕРЅС‹ РІР·Р°РёРјРѕРґРµР№СЃС‚РІРёСЏ");
 
-            if (interactPrompt != null)
-                interactPrompt.SetActive(false); // Скрываем спрайт "E"
+            if (currentLineRenderer != null)
+            {
+                currentLineRenderer.enabled = false;
+                currentLineRenderer = null;
+            }
         }
+    }
+
+    private void ConfigureLineRenderer(LineRenderer lineRenderer, EdgeCollider2D edgeCollider, Transform objTransform)
+    {
+        Vector2[] points2D = edgeCollider.points;
+        Vector3[] points3D = new Vector3[points2D.Length];
+        for (int i = 0; i < points2D.Length; i++)
+        {
+            points3D[i] = objTransform.TransformPoint(new Vector3(points2D[i].x, points2D[i].y, 0f));
+        }
+        lineRenderer.positionCount = points3D.Length;
+        lineRenderer.SetPositions(points3D);
+        lineRenderer.startWidth = 0.1f;
+        lineRenderer.endWidth = 0.1f;
+        lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+        lineRenderer.startColor = Color.green;
+        lineRenderer.endColor = Color.green;
+        lineRenderer.useWorldSpace = true;
     }
 }

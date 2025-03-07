@@ -32,7 +32,7 @@ public class DialogueSystem : MonoBehaviour
     
     private void Start()
     {
-        // В начале оба окна не видны
+        // Изначально отключаем диалоговые окна
         dialogBox1.SetActive(false);
         dialogBox2.SetActive(false);
         triggerCollider = GetComponent<Collider2D>();
@@ -78,7 +78,7 @@ public class DialogueSystem : MonoBehaviour
         Time.timeScale = 0f;
         currentLine = 0;
         
-        // Активируем оба окна и очищаем их текст, чтобы диалог накапливался с нуля
+        // Активируем оба окна и очищаем их текст при старте диалога
         dialogBox1.SetActive(true);
         dialogBox2.SetActive(true);
         dialogText1.text = "";
@@ -96,6 +96,13 @@ public class DialogueSystem : MonoBehaviour
             return;
         }
         
+        // Если начинаем новую пару (индекс четный), очищаем оба текстовых поля
+        if (currentLine % 2 == 0)
+        {
+            dialogText1.text = "";
+            dialogText2.text = "";
+        }
+        
         bool speaker1Active = isSpeaker1[currentLine];
         string message = dialogue[currentLine];
         currentLine++;
@@ -105,12 +112,11 @@ public class DialogueSystem : MonoBehaviour
         
         if (speaker1Active)
         {
-            // Анимация диалоговых окон
+            // Анимация для диалоговых окон и иконок
             AnimateDialogueBox(dialogBox1, dialogCanvasGroup1, true);
             AnimateDialogueBox(dialogBox2, dialogCanvasGroup2, false);
-            // Анимация иконок
             AnimateSpeaker(speakerIcon1, speakerIcon2);
-            // Запускаем анимацию набора текста, дописывая в конец уже существующего текста
+            // Пишем текст в окно первого персонажа
             typingCoroutine = StartCoroutine(TypeText(dialogText1, message));
         }
         else
@@ -118,6 +124,7 @@ public class DialogueSystem : MonoBehaviour
             AnimateDialogueBox(dialogBox2, dialogCanvasGroup2, true);
             AnimateDialogueBox(dialogBox1, dialogCanvasGroup1, false);
             AnimateSpeaker(speakerIcon2, speakerIcon1);
+            // Пишем текст в окно второго персонажа
             typingCoroutine = StartCoroutine(TypeText(dialogText2, message));
         }
         
@@ -128,13 +135,12 @@ public class DialogueSystem : MonoBehaviour
     private IEnumerator TypeText(TextMeshProUGUI textComponent, string message)
     {
         isTyping = true;
+        // Начинаем с текущего текста (он может быть пустым или уже набран, если это вторая реплика пары)
         string baseText = textComponent.text;
-        // Если уже есть текст, добавляем перенос строки перед новой репликой
-        string prefix = baseText.Length > 0 ? "\n" : "";
         int index = 0;
         while (index <= message.Length)
         {
-            textComponent.text = baseText + prefix + message.Substring(0, index);
+            textComponent.text = baseText + message.Substring(0, index);
             index++;
             yield return new WaitForSecondsRealtime(typingSpeed);
         }
@@ -156,7 +162,7 @@ public class DialogueSystem : MonoBehaviour
             .setIgnoreTimeScale(true);
     }
     
-    // Анимация для диалоговых окон (подсвечиваем активное окно и затемняем неактивное)
+    // Анимация для диалоговых окон – активное окно чуть увеличено и ярче, неактивное чуть уменьшено
     private void AnimateDialogueBox(GameObject box, CanvasGroup group, bool active)
     {
         if (active)
@@ -181,7 +187,7 @@ public class DialogueSystem : MonoBehaviour
     {
         isPaused = false;
         Time.timeScale = 1f;
-        // Плавно исчезаем оба окна
+        // Плавно исчезают оба окна
         LeanTween.alphaCanvas(dialogCanvasGroup1, 0f, 0.5f)
             .setIgnoreTimeScale(true);
         LeanTween.alphaCanvas(dialogCanvasGroup2, 0f, 0.5f)
