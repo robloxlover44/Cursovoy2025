@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      OPENCURLY_0: -354374729297590047
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
