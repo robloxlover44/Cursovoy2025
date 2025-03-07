@@ -1,18 +1,10 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using System.Linq;
 
 public class ReturnToFirstScene : MonoBehaviour
 {
-    private Camera firstSceneCamera;
-    private Canvas firstSceneCanvas;
-
-    private void Start()
-    {
-        firstSceneCamera = GameObject.FindGameObjectWithTag("MainCamera")?.GetComponent<Camera>();
-        firstSceneCanvas = GameObject.FindObjectOfType<Canvas>();
-    }
-
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.R))
@@ -28,6 +20,16 @@ public class ReturnToFirstScene : MonoBehaviour
             Scene lastScene = SceneManager.GetSceneAt(SceneManager.sceneCount - 1);
             Debug.Log("Unloading scene: " + lastScene.name);
 
+            Camera[] allCameras = Camera.allCameras;
+            foreach (Camera cam in allCameras)
+            {
+                if (cam.gameObject.scene == lastScene)
+                {
+                    cam.gameObject.SetActive(false);
+                    Debug.Log("Disabled camera in second scene: " + cam.name);
+                }
+            }
+
             AsyncOperation asyncUnload = SceneManager.UnloadSceneAsync(lastScene);
             if (asyncUnload == null)
             {
@@ -42,26 +44,41 @@ public class ReturnToFirstScene : MonoBehaviour
 
             Debug.Log("Scene unloaded successfully: " + lastScene.name);
 
-            // Устанавливаем первую сцену как активную
             Scene firstScene = SceneManager.GetSceneAt(0);
             SceneManager.SetActiveScene(firstScene);
+
+            Camera firstSceneCamera = null;
+            GameObject cameraObj = GameObject.FindGameObjectWithTag("MainCamera");
+            if (cameraObj != null)
+            {
+                firstSceneCamera = cameraObj.GetComponent<Camera>();
+            }
+
+            if (firstSceneCamera == null)
+            {
+                firstSceneCamera = firstScene.GetRootGameObjects()
+                    .SelectMany(go => go.GetComponentsInChildren<Camera>(true))
+                    .FirstOrDefault();
+                Debug.Log("Fallback search for camera in first scene: " + (firstSceneCamera != null ? firstSceneCamera.name : "Not found"));
+            }
 
             if (firstSceneCamera != null)
             {
                 firstSceneCamera.gameObject.SetActive(true);
-                firstSceneCamera.Render(); // Принудительно рендерим
+                Debug.Log("First scene camera enabled: " + firstSceneCamera.name);
             }
-            if (firstSceneCanvas != null)
-                firstSceneCanvas.gameObject.SetActive(true);
+            else
+            {
+                Debug.LogError("No camera found in first scene even after exhaustive search!");
+            }
 
-            // Уничтожаем этот объект, чтобы он не остался в DontDestroyOnLoad
             Destroy(gameObject);
 
-            yield return null; // Ждем кадр
+            yield return null;
         }
         else
         {
-            Debug.LogError("No additive scene to unload! Only one scene is loaded.");
+            Debug.LogError("No additive scene to unload!");
         }
     }
 }

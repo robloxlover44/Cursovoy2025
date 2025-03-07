@@ -4,17 +4,22 @@ using System.Collections;
 
 public class Bar : MonoBehaviour, IInteractable
 {
-    public string sceneToLoad;
+    public string sceneToLoad = "bar Store";
     private FadeController fadeController;
     private Camera firstSceneCamera;
-    private Canvas firstSceneCanvas;
 
     private void Start()
     {
         fadeController = FindObjectOfType<FadeController>();
-        firstSceneCamera = Camera.main;
-        firstSceneCanvas = FindObjectOfType<Canvas>();
-        Debug.Log($"Scene to load: {sceneToLoad}");
+        firstSceneCamera = GameObject.FindGameObjectWithTag("MainCamera")?.GetComponent<Camera>();
+        if (firstSceneCamera == null)
+        {
+            Debug.LogError("No MainCamera found at start in Bar!");
+        }
+        else
+        {
+            Debug.Log($"Scene to load: {sceneToLoad}, First camera: {firstSceneCamera.name}");
+        }
     }
 
     public void Interact()
@@ -27,12 +32,12 @@ public class Bar : MonoBehaviour, IInteractable
 
     private IEnumerator LoadSceneAdditiveWithFade()
     {
-        //yield return fadeController.FadeOut(); // Закомментировано
         Debug.Log("Starting scene load: " + sceneToLoad);
         if (firstSceneCamera != null)
+        {
             firstSceneCamera.gameObject.SetActive(false);
-        if (firstSceneCanvas != null)
-            firstSceneCanvas.gameObject.SetActive(false);
+            Debug.Log("First scene camera disabled");
+        }
 
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneToLoad, LoadSceneMode.Additive);
         if (asyncLoad == null)
@@ -43,11 +48,9 @@ public class Bar : MonoBehaviour, IInteractable
 
         while (!asyncLoad.isDone)
         {
-            Debug.Log("Loading progress: " + asyncLoad.progress);
             yield return null;
         }
 
         Debug.Log("Scene loaded: " + sceneToLoad);
-        //yield return fadeController.FadeIn(); // Закомментировано
     }
 }
