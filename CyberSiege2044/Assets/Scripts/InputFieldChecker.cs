@@ -5,17 +5,17 @@ using UnityEngine.UI;
 
 public class InputFieldChecker : MonoBehaviour
 {
-    public TMP_InputField inputField; // Ссылка на TMP_InputField
-    public  GameObject Fadein1; // Ссылка на TextMeshProUGUI для отображения результата
-    public  GameObject Fadein2; // Ссылка на TextMeshProUGUI для отображения результата
-    public  GameObject Fadein3; // Ссылка на TextMeshProUGUI для отображения результата
+    public TMP_InputField inputField; // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ TMP_InputField
+    public  GameObject Fadein1; // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ TextMeshProUGUI пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    public  GameObject Fadein2; // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ TextMeshProUGUI пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    public  GameObject Fadein3; // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ TextMeshProUGUI пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     private bool _check = false;
     private void Update()
     {
         CheckInput();
     }
 
-    // Метод для проверки значения
+    // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     public void CheckInput()
     {
         if (_check == false & inputField.text == "start")

@@ -6,7 +6,7 @@ public class Bar : MonoBehaviour, IInteractable
 {
     public string sceneToLoad = "bar Store";
     private FadeController fadeController;
-    private Camera firstSceneCamera;
+    public static Camera firstSceneCamera; // Статическая переменная для камеры
 
     private void Start()
     {
