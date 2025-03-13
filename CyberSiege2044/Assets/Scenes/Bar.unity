@@ -4513,7 +4513,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edd0f4cc9d005c94489bd0b95254ce95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  requiredShards: 50
+  requiredShards: 10
   shardText: {fileID: 28871078}
   shakeDuration: 0.5
   shakeStrength: 0.1
