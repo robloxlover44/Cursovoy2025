@@ -1,22 +1,24 @@
 using System;
 using UnityEngine;
 
-[Serializable] // Необходим для сериализации в JSON
+[Serializable]
 public class PlayerDataModel
 {
     public int money;
     public int shards;
+    public int health; // Добавляем здоровье
 
-    // Конструктор с значениями по умолчанию
     public PlayerDataModel()
     {
         money = 0;
         shards = 0;
+        health = 100; // Задаем начальное значение здоровья, например 100
     }
 
-    // Методы для работы с валютами
+    // Методы для работы с валютами и здоровьем
     public void AddMoney(int amount) => money += amount;
     public void AddShards(int amount) => shards += amount;
+    public void AddHealth(int amount) => health += amount; // Добавляем метод для прибавления здоровья
 
     public bool SpendMoney(int amount)
     {
@@ -33,6 +35,16 @@ public class PlayerDataModel
         if (shards >= amount)
         {
             shards -= amount;
+            return true;
+        }
+        return false;
+    }
+
+    public bool SpendHealth(int amount) // Добавляем метод для траты здоровья
+    {
+        if (health >= amount)
+        {
+            health -= amount;
             return true;
         }
         return false;

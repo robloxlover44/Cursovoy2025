@@ -5,7 +5,7 @@ public class PlayerDataManager : MonoBehaviour
     public static PlayerDataManager Instance { get; private set; }
     private PlayerDataModel playerData;
 
-    private const string DATA_KEY = "PlayerData"; // Ключ для сохранения
+    private const string DATA_KEY = "PlayerData";
 
     private void Awake()
     {
@@ -16,11 +16,10 @@ public class PlayerDataManager : MonoBehaviour
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject); // Сохраняем между сценами
-        LoadData(); // Загружаем данные при старте
+        DontDestroyOnLoad(gameObject);
+        LoadData();
     }
 
-    // Инициализация или загрузка данных
     private void LoadData()
     {
         if (PlayerPrefs.HasKey(DATA_KEY))
@@ -30,12 +29,11 @@ public class PlayerDataManager : MonoBehaviour
         }
         else
         {
-            playerData = new PlayerDataModel(); // Новые данные, если нет сохранений
+            playerData = new PlayerDataModel();
             SaveData();
         }
     }
 
-    // Сохранение данных
     private void SaveData()
     {
         string json = JsonUtility.ToJson(playerData);
@@ -46,6 +44,7 @@ public class PlayerDataManager : MonoBehaviour
     // Публичные методы для доступа к данным
     public int GetMoney() => playerData.money;
     public int GetShards() => playerData.shards;
+    public int GetHealth() => playerData.health; // Добавляем геттер для здоровья
 
     public void AddMoney(int amount)
     {
@@ -56,6 +55,12 @@ public class PlayerDataManager : MonoBehaviour
     public void AddShards(int amount)
     {
         playerData.AddShards(amount);
+        SaveData();
+    }
+
+    public void AddHealth(int amount) // Добавляем метод для увеличения здоровья
+    {
+        playerData.AddHealth(amount);
         SaveData();
     }
 
@@ -73,10 +78,16 @@ public class PlayerDataManager : MonoBehaviour
         return success;
     }
 
-    // Для сброса данных (опционально)
+    public bool SpendHealth(int amount) // Добавляем метод для уменьшения здоровья
+    {
+        bool success = playerData.SpendHealth(amount);
+        if (success) SaveData();
+        return success;
+    }
+
     public void ResetData()
     {
         playerData = new PlayerDataModel();
         SaveData();
     }
-}
+}   

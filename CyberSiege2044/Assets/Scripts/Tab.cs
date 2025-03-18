@@ -11,6 +11,7 @@ public class ToggleObject : MonoBehaviour
 
     [SerializeField] private TMP_Text moneyText;
     [SerializeField] private TMP_Text shardsText;
+    [SerializeField] private TMP_Text healthText; // Добавляем ссылку на TextMeshPro для здоровья
     [SerializeField] private Button resetButton; // Ссылка на кнопку сброса
 
     private bool isVisible = false;
@@ -25,9 +26,9 @@ public class ToggleObject : MonoBehaviour
             return;
         }
 
-        if (moneyText == null || shardsText == null)
+        if (moneyText == null || shardsText == null || healthText == null) // Добавляем проверку для healthText
         {
-            Debug.LogError("MoneyText or ShardsText is not assigned in the inspector!");
+            Debug.LogError("MoneyText, ShardsText or HealthText is not assigned in the inspector!");
         }
 
         if (resetButton == null)
@@ -77,10 +78,11 @@ public class ToggleObject : MonoBehaviour
 
     private void UpdateCurrencyDisplay()
     {
-        if (PlayerDataManager.Instance != null && moneyText != null && shardsText != null)
+        if (PlayerDataManager.Instance != null && moneyText != null && shardsText != null && healthText != null) // Добавляем healthText в проверку
         {
             moneyText.text = PlayerDataManager.Instance.GetMoney().ToString(); // Только число
             shardsText.text = PlayerDataManager.Instance.GetShards().ToString(); // Только число
+            healthText.text = PlayerDataManager.Instance.GetHealth().ToString(); // Добавляем отображение здоровья
         }
     }
 
