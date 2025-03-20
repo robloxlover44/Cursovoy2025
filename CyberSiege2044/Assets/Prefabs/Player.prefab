@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4611785708090266749}
   - component: {fileID: 1913802726136418041}
-  - component: {fileID: 5737235078209005338}
+  - component: {fileID: 651654316199371601}
   - component: {fileID: 7955981932185155224}
   - component: {fileID: 1329242053590055417}
   - component: {fileID: 5541703015149751348}
@@ -91,7 +91,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &5737235078209005338
+--- !u!114 &651654316199371601
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -100,24 +100,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1285986901064291813}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c38ec0975e3e5b540a7100dd36184dbe, type: 3}
+  m_Script: {fileID: 11500000, guid: c0fbc58e9a368354cbd31d9b9baad6c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
-  rotationSpeed: 2000
-  spriteRenderer: {fileID: 1913802726136418041}
-  idleSprites:
-  - {fileID: 308100624062084415, guid: 789cf6f4dd2c5b748bc2716b5103dca8, type: 3}
-  runSprites:
-  - {fileID: 7548083834808301637, guid: ca162d88ce0a9af418890caa3e292633, type: 3}
-  - {fileID: -4866748710115689693, guid: 61db4d3f60383bc44a31ce9e75ab38bb, type: 3}
-  - {fileID: 940885694740692502, guid: 00b182eabc59eac40a802d78a4fb83cc, type: 3}
-  - {fileID: -2087303058002744514, guid: 7a89b8cbc5c960146b4091210afd6648, type: 3}
+  rotationSpeed: 200
+  spriteRenderer: {fileID: 0}
+  idleSprites: []
+  runSprites: []
   animationSpeed: 0.1
   cameraTransform: {fileID: 0}
   cameraOffset: {x: 0, y: 0, z: 0}
   shakeIntensity: 0.2
-  shakeSpeed: 0.5
+  shakeSpeed: 5
+  projectilePrefab: {fileID: 0}
+  fireRate: 0.5
 --- !u!50 &7955981932185155224
 Rigidbody2D:
   serializedVersion: 5
