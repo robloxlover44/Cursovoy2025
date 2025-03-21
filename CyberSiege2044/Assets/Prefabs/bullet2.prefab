@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 7967870127727147408}
   - component: {fileID: -7445365215013943366}
   m_Layer: 9
-  m_Name: bullet
+  m_Name: bullet2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -80,8 +80,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 6443249709818313110, guid: c69ead1641173a6478464207af938d4b, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Sprite: {fileID: 4981780943573750407, guid: b0a8de761510e344c9f594ff626b7aae, type: 3}
+  m_Color: {r: 0.94680595, g: 0, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -125,8 +125,8 @@ CircleCollider2D:
   m_UsedByEffector: 1
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.05, y: 0}
-  m_Radius: 0.06
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 0.16
 --- !u!114 &8455549936185252886
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140,7 +140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 20
-  damage: 50
+  damage: 100
 --- !u!50 &7967870127727147408
 Rigidbody2D:
   serializedVersion: 5
@@ -181,8 +181,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   idleSprites:
-  - {fileID: 6443249709818313110, guid: c69ead1641173a6478464207af938d4b, type: 3}
-  - {fileID: -3795183398887512977, guid: 94492a7137ac26a40a5d867a7c43ef34, type: 3}
-  - {fileID: -2861308788912492840, guid: 10e78db60b4ada7428572fa6fe008017, type: 3}
-  - {fileID: -8280172744235204991, guid: 1f7975c7c0035944796955770eca929f, type: 3}
+  - {fileID: 4981780943573750407, guid: b0a8de761510e344c9f594ff626b7aae, type: 3}
+  - {fileID: -5820669104244064573, guid: e8ab30cabdbeded48b2c8ae269265a16, type: 3}
+  - {fileID: -3911516674712350219, guid: 22589e1e9b207394780789e80c377b02, type: 3}
+  - {fileID: 4817717085478286207, guid: 60c3d170b25e844409deff4bced66fa4, type: 3}
+  - {fileID: 7679040000412765643, guid: bed061c574e397649935ed1c2b980d70, type: 3}
+  - {fileID: -1087514210889348393, guid: 25c96d727ded4474fb2c90d6edd26d64, type: 3}
   animationSpeed: 0.05

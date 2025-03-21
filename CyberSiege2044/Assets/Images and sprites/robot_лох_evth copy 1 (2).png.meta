@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 89f17d7265a7dd64685381d0dc22781a
+guid: 3f1c35135cf46514b9ab1d3ddf796adb
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5241715252462823303
-    second: katana 44_0
+      213: 8364687576613802141
+    second: "robot_\u043B\u043E\u0445_evth copy 1 (2)_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: katana 44_0
+      name: "robot_\u043B\u043E\u0445_evth copy 1 (2)_0"
       rect:
         serializedVersion: 2
-        x: 2
-        y: 18
-        width: 47
-        height: 14
+        x: 191
+        y: 99
+        width: 365
+        height: 911
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7872bc410405eb840800000000000000
-      internalID: 5241715252462823303
+      spriteID: d90503d6807551470800000000000000
+      internalID: 8364687576613802141
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      katana 44_0: 5241715252462823303
+      "robot_\u043B\u043E\u0445_evth copy 1 (2)_0": 8364687576613802141
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -4,6 +4,9 @@ using TMPro; // Подключаем TextMeshPro
 
 public class Weapon : MonoBehaviour
 {
+
+    public string weaponID; // ID оружия (задается вручную)
+    
     [Header("Ammo Settings")]
     public int magazineCapacity = 10;  // Патронов в магазине (x)
     public int currentAmmo;            // Текущее количество патронов в магазине

@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using System.Collections.Generic;
 public class PlayerDataManager : MonoBehaviour
 {
     public static PlayerDataManager Instance { get; private set; }
@@ -84,6 +84,25 @@ public class PlayerDataManager : MonoBehaviour
         if (success) SaveData();
         return success;
     }
+
+    public void AddWeaponToInventory(string weaponID)
+{
+    if (string.IsNullOrEmpty(weaponID))
+    {
+        Debug.LogError("WeaponID is null or empty!");
+        return;
+    }
+    playerData.inventoryWeapons.Add(weaponID);
+    Debug.Log($"Added {weaponID} to inventory");
+    SaveData();
+}
+
+
+    public List<string> GetInventoryWeapons()
+    {
+    return playerData.inventoryWeapons;
+    }
+
 
     public void ResetData()
     {

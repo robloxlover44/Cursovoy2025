@@ -7,14 +7,15 @@ public class ToggleObject : MonoBehaviour
 {
     [SerializeField] private GameObject targetObject; // Объект окна
     [SerializeField] private float animationDuration = 0.5f; // Длительность анимации
-    [SerializeField] private LeanTweenType easeType = LeanTweenType.easeInOutQuad; // Тип анимации
-
     [SerializeField] private TMP_Text moneyText;
     [SerializeField] private TMP_Text shardsText;
     [SerializeField] private TMP_Text healthText; // Добавляем ссылку на TextMeshPro для здоровья
     [SerializeField] private Button resetButton; // Ссылка на кнопку сброса
 
     private bool isVisible = false;
+    private Vector3 hiddenPosition;
+    private Vector3 visiblePosition;
+    private CanvasGroup canvasGroup;
 
     void Start()
     {
@@ -26,7 +27,7 @@ public class ToggleObject : MonoBehaviour
             return;
         }
 
-        if (moneyText == null || shardsText == null || healthText == null) // Добавляем проверку для healthText
+        if (moneyText == null || shardsText == null || healthText == null)
         {
             Debug.LogError("MoneyText, ShardsText or HealthText is not assigned in the inspector!");
         }
@@ -40,7 +41,18 @@ public class ToggleObject : MonoBehaviour
             resetButton.onClick.AddListener(ResetPlayerData);
         }
 
-        targetObject.transform.localScale = Vector3.zero;
+        canvasGroup = targetObject.GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+        {
+            canvasGroup = targetObject.AddComponent<CanvasGroup>();
+        }
+        canvasGroup.alpha = 0f;
+
+        RectTransform rectTransform = targetObject.GetComponent<RectTransform>();
+        hiddenPosition = rectTransform.anchoredPosition + new Vector2(Screen.width, 0);
+        visiblePosition = rectTransform.anchoredPosition;
+        rectTransform.anchoredPosition = hiddenPosition;
+
         targetObject.SetActive(false);
     }
 
@@ -56,21 +68,20 @@ public class ToggleObject : MonoBehaviour
     {
         LeanTween.cancel(targetObject);
 
+        RectTransform rectTransform = targetObject.GetComponent<RectTransform>();
+
         if (isVisible)
         {
-            LeanTween.scale(targetObject, Vector3.zero, animationDuration)
-                .setEase(easeType)
-                .setOnComplete(() => targetObject.SetActive(false));
+            LeanTween.alphaCanvas(canvasGroup, 0f, animationDuration * 0.5f);
+            LeanTween.moveX(rectTransform, hiddenPosition.x, animationDuration).setOnComplete(() => targetObject.SetActive(false));
         }
         else
         {
             targetObject.SetActive(true);
-            targetObject.transform.localScale = Vector3.zero;
-
+            rectTransform.anchoredPosition = hiddenPosition;
+            LeanTween.moveX(rectTransform, visiblePosition.x, animationDuration);
+            LeanTween.alphaCanvas(canvasGroup, 1f, animationDuration * 0.5f);
             UpdateCurrencyDisplay();
-
-            LeanTween.scale(targetObject, Vector3.one, animationDuration)
-                .setEase(easeType);
         }
 
         isVisible = !isVisible;
@@ -78,11 +89,11 @@ public class ToggleObject : MonoBehaviour
 
     private void UpdateCurrencyDisplay()
     {
-        if (PlayerDataManager.Instance != null && moneyText != null && shardsText != null && healthText != null) // Добавляем healthText в проверку
+        if (PlayerDataManager.Instance != null && moneyText != null && shardsText != null && healthText != null)
         {
-            moneyText.text = PlayerDataManager.Instance.GetMoney().ToString(); // Только число
-            shardsText.text = PlayerDataManager.Instance.GetShards().ToString(); // Только число
-            healthText.text = PlayerDataManager.Instance.GetHealth().ToString(); // Добавляем отображение здоровья
+            moneyText.text = PlayerDataManager.Instance.GetMoney().ToString();
+            shardsText.text = PlayerDataManager.Instance.GetShards().ToString();
+            healthText.text = PlayerDataManager.Instance.GetHealth().ToString();
         }
     }
 
@@ -90,8 +101,8 @@ public class ToggleObject : MonoBehaviour
     {
         if (PlayerDataManager.Instance != null)
         {
-            PlayerDataManager.Instance.ResetData(); // Сбрасываем данные
-            UpdateCurrencyDisplay(); // Обновляем отображение
+            PlayerDataManager.Instance.ResetData();
+            UpdateCurrencyDisplay();
             Debug.Log("Player data reset to zero!");
         }
         else
@@ -107,4 +118,4 @@ public class ToggleObject : MonoBehaviour
             resetButton.onClick.RemoveListener(ResetPlayerData);
         }
     }
-}
+} 

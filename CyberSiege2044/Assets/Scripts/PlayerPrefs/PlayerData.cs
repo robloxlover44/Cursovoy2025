@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 [Serializable]
 public class PlayerDataModel
@@ -7,6 +8,7 @@ public class PlayerDataModel
     public int money;
     public int shards;
     public int health; // Добавляем здоровье
+    public List<string> inventoryWeapons = new List<string>();
 
     public PlayerDataModel()
     {
