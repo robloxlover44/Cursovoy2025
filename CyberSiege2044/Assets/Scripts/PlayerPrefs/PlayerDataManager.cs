@@ -41,10 +41,9 @@ public class PlayerDataManager : MonoBehaviour
         PlayerPrefs.Save();
     }
 
-    // Публичные методы для доступа к данным
     public int GetMoney() => playerData.money;
     public int GetShards() => playerData.shards;
-    public int GetHealth() => playerData.health; // Добавляем геттер для здоровья
+    public int GetHealth() => playerData.health;
 
     public void AddMoney(int amount)
     {
@@ -58,7 +57,7 @@ public class PlayerDataManager : MonoBehaviour
         SaveData();
     }
 
-    public void AddHealth(int amount) // Добавляем метод для увеличения здоровья
+    public void AddHealth(int amount)
     {
         playerData.AddHealth(amount);
         SaveData();
@@ -78,7 +77,7 @@ public class PlayerDataManager : MonoBehaviour
         return success;
     }
 
-    public bool SpendHealth(int amount) // Добавляем метод для уменьшения здоровья
+    public bool SpendHealth(int amount)
     {
         bool success = playerData.SpendHealth(amount);
         if (success) SaveData();
@@ -86,27 +85,36 @@ public class PlayerDataManager : MonoBehaviour
     }
 
     public void AddWeaponToInventory(string weaponID)
-{
-    if (string.IsNullOrEmpty(weaponID))
     {
-        Debug.LogError("WeaponID is null or empty!");
-        return;
+        if (string.IsNullOrEmpty(weaponID))
+        {
+            Debug.LogError("WeaponID is null or empty!");
+            return;
+        }
+        playerData.inventoryWeapons.Add(weaponID);
+        Debug.Log($"Added {weaponID} to inventory");
+        SaveData();
     }
-    playerData.inventoryWeapons.Add(weaponID);
-    Debug.Log($"Added {weaponID} to inventory");
-    SaveData();
-}
-
 
     public List<string> GetInventoryWeapons()
     {
-    return playerData.inventoryWeapons;
+        return playerData.inventoryWeapons;
     }
 
+    public void SetCurrentWeaponIndex(int index)
+    {
+        playerData.currentWeaponIndex = index;
+        SaveData();
+    }
+
+    public int GetCurrentWeaponIndex()
+    {
+        return playerData.currentWeaponIndex;
+    }
 
     public void ResetData()
     {
         playerData = new PlayerDataModel();
         SaveData();
     }
-}   
+}

@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Start Phone.unity
+    guid: e571b8cdf8c7e4b4eb640267588fbcf9
+  - enabled: 1
     path: Assets/Scenes/Bar.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
@@ -14,5 +17,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/bar Store.unity
     guid: ead279e0763c64e4aa698d5797b3f1da
+  - enabled: 1
+    path: Assets/Scenes/tutorial.unity
+    guid: d2b29b183db8a1045814e1310a127f9a
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

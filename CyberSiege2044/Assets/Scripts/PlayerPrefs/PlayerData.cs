@@ -9,12 +9,15 @@ public class PlayerDataModel
     public int shards;
     public int health; // Добавляем здоровье
     public List<string> inventoryWeapons = new List<string>();
+    public int currentWeaponIndex;
+    
 
     public PlayerDataModel()
     {
         money = 0;
         shards = 0;
         health = 100; // Задаем начальное значение здоровья, например 100
+        currentWeaponIndex = -1; // -1 означает, что оружие не выбрано
     }
 
     // Методы для работы с валютами и здоровьем

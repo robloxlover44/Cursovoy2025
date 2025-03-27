@@ -4,50 +4,87 @@ using System.Collections.Generic;
 
 public class InventoryUI : MonoBehaviour
 {
-    // Список слотов инвентаря (например, Image или Button компоненты)
     public List<Image> inventorySlots;
+    private List<Vector3> originalPositions = new List<Vector3>(); // Храним исходные позиции слотов
+    private List<Vector3> originalScales = new List<Vector3>(); // Храним исходные масштабы слотов
 
     void Start()
-{
-    // Явно обновляем инвентарь при старте
-    RefreshInventory();
-}
+    {
+        // Сохраняем исходные позиции и масштабы слотов
+        foreach (Image slot in inventorySlots)
+        {
+            if (slot != null)
+            {
+                originalPositions.Add(slot.transform.parent.position);
+                originalScales.Add(slot.transform.parent.localScale);
+            }
+        }
 
+        RefreshInventory();
+    }
 
-    // Метод для обновления инвентаря
     public void RefreshInventory()
     {
         List<string> weapons = PlayerDataManager.Instance.GetInventoryWeapons();
-        
-        // Пример: проходимся по слотам и заполняем их данными
+
         for (int i = 0; i < inventorySlots.Count; i++)
         {
             if (i < weapons.Count)
             {
-                // Здесь можно загружать спрайт по ID оружия и присваивать его слоту
                 inventorySlots[i].sprite = GetWeaponSprite(weapons[i]);
                 inventorySlots[i].enabled = true;
             }
             else
             {
-                // Если оружия меньше, чем слотов, очищаем слот
                 inventorySlots[i].sprite = null;
                 inventorySlots[i].enabled = false;
             }
         }
+
+        // Подсвечиваем активное оружие
+        HighlightActiveWeapon(PlayerDataManager.Instance.GetCurrentWeaponIndex());
     }
 
-    // Метод для получения спрайта оружия по его ID
     private Sprite GetWeaponSprite(string weaponID)
-{
-    Sprite sprite = Resources.Load<Sprite>("Weapons/" + weaponID);
-    if (sprite == null)
     {
-        Debug.LogError($"Спрайт для {weaponID} не найден!");
-        return Resources.Load<Sprite>("Weapons/44"); // Заглушка
+        Sprite sprite = Resources.Load<Sprite>("Weapons/" + weaponID);
+        if (sprite == null)
+        {
+            Debug.LogError($"Спрайт для {weaponID} не найден!");
+            return Resources.Load<Sprite>("Weapons/44");
+        }
+        return sprite;
     }
-    return sprite;
-}
 
+    public void HighlightActiveWeapon(int activeIndex)
+    {
+        // Сбрасываем все слоты к исходному состоянию
+        for (int i = 0; i < inventorySlots.Count; i++)
+        {
+            if (inventorySlots[i] != null && inventorySlots[i].transform.parent != null)
+            {
+                Transform slotParent = inventorySlots[i].transform.parent;
+                LeanTween.cancel(slotParent.gameObject); // Отменяем предыдущие анимации
 
+                // Возвращаем исходные позицию и масштаб
+                LeanTween.move(slotParent.gameObject, originalPositions[i], 0.3f).setEase(LeanTweenType.easeOutQuad);
+                LeanTween.scale(slotParent.gameObject, originalScales[i], 0.3f).setEase(LeanTweenType.easeOutQuad);
+            }
+        }
+
+        // Подсвечиваем активный слот
+        if (activeIndex >= 0 && activeIndex < inventorySlots.Count && inventorySlots[activeIndex] != null)
+        {
+            Transform activeSlotParent = inventorySlots[activeIndex].transform.parent;
+            if (activeSlotParent != null)
+            {
+                // Увеличиваем масштаб (например, до 1.2)
+                LeanTween.scale(activeSlotParent.gameObject, originalScales[activeIndex] * 1.2f, 0.3f).setEase(LeanTweenType.easeOutQuad);
+
+                // Сдвигаем вправо на 10 пикселей
+                Vector3 targetPosition = originalPositions[activeIndex] + new Vector3(1f, 0, 0);
+                LeanTween.move(activeSlotParent.gameObject, targetPosition, 0.3f).setEase(LeanTweenType.easeOutQuad);
+            }
+        }
+    }
 }

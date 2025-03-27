@@ -4,9 +4,9 @@ using UnityEngine.UI;
 
 public class HealthBar : MonoBehaviour
 {
-    [SerializeField] private TMP_Text healthText; // Ссылка на TextMeshPro для отображения здоровья
-    [SerializeField] private Slider healthSlider; // Ссылка на слайдер для HP-бара
-    [SerializeField] private int maxHealth = 100; // Максимальное здоровье (настраивается в инспекторе)
+    [SerializeField] private TMP_Text healthText; // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ TextMeshPro пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    [SerializeField] private Slider healthSlider; // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ HP-пїЅпїЅпїЅпїЅ
+    [SerializeField] private int maxHealth = 100; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
 
     private void Start()
     {
@@ -21,16 +21,16 @@ public class HealthBar : MonoBehaviour
         }
         else
         {
-            healthSlider.minValue = 0; // Устанавливаем минимальное значение слайдера
-            healthSlider.maxValue = maxHealth; // Устанавливаем максимальное значение слайдера
+            healthSlider.minValue = 0; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+            healthSlider.maxValue = maxHealth; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         }
 
-        UpdateHealthDisplay(); // Обновляем при старте
+        UpdateHealthDisplay(); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     }
 
     private void Update()
     {
-        UpdateHealthDisplay(); // Обновляем каждый кадр (можно оптимизировать, если нужно)
+        UpdateHealthDisplay(); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ)
     }
 
     private void UpdateHealthDisplay()
@@ -38,8 +38,8 @@ public class HealthBar : MonoBehaviour
         if (PlayerDataManager.Instance != null && healthText != null && healthSlider != null)
         {
             int currentHealth = PlayerDataManager.Instance.GetHealth();
-            healthText.text = $"{currentHealth}/{maxHealth}"; // Отображаем текущее и максимальное здоровье
-            healthSlider.value = currentHealth; // Синхронизируем слайдер с текущим здоровьем
+            healthText.text = $"{currentHealth}"; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+            healthSlider.value = currentHealth; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         }
     }
 }

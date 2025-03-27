@@ -1,5 +1,8 @@
 using UnityEngine;
-using UnityEngine.UI; // Если решишь использовать UI для отображения патронов
+using UnityEngine.UI;
+using System.Collections.Generic;
+using TMPro;
+using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
@@ -9,8 +12,8 @@ public class PlayerController : MonoBehaviour
     public Sprite[] idleSprites;
     public Sprite[] runSprites;
     public float animationSpeed = 0.1f;
-    public Transform cameraTransform; 
-    public Vector3 cameraOffset; 
+    public Transform cameraTransform;
+    public Vector3 cameraOffset;
 
     private Vector2 movement;
     private Rigidbody2D rb;
@@ -19,14 +22,19 @@ public class PlayerController : MonoBehaviour
     private int currentFrame;
     private bool isMoving;
 
-    // Параметры для покачивания камеры
-    public float shakeIntensity = 0.2f; 
+    public List<GameObject> inventoryWeaponObjects = new List<GameObject>();
+    public GameObject currentWeaponObject;
+    private int currentWeaponIndex = -1;
+
+    public float shakeIntensity = 0.2f;
     public float shakeSpeed = 5f;
     private float shakeTimeOffsetX;
     private float shakeTimeOffsetY;
 
-    // Ссылка на оружие
     public Weapon currentWeapon;
+
+    [Header("UI Settings")]
+    public TMP_Text ammoText;
 
     void Start()
     {
@@ -40,6 +48,40 @@ public class PlayerController : MonoBehaviour
 
         shakeTimeOffsetX = Random.value * 10f;
         shakeTimeOffsetY = Random.value * 10f;
+
+        List<string> weaponIDs = PlayerDataManager.Instance.GetInventoryWeapons();
+        foreach (string weaponID in weaponIDs)
+        {
+            GameObject weaponPrefab = Resources.Load<GameObject>("Weapons/" + weaponID);
+            if (weaponPrefab != null)
+            {
+                GameObject newWeaponObject = Instantiate(weaponPrefab, transform.position, Quaternion.identity);
+                newWeaponObject.transform.SetParent(transform);
+                SpriteRenderer[] weaponSprites = newWeaponObject.GetComponentsInChildren<SpriteRenderer>();
+                foreach (SpriteRenderer sprite in weaponSprites)
+                {
+                    sprite.enabled = false;
+                }
+                inventoryWeaponObjects.Add(newWeaponObject);
+                newWeaponObject.SetActive(false);
+            }
+            else
+            {
+                Debug.LogError("Не удалось загрузить префаб оружия: " + weaponID);
+            }
+        }
+
+        currentWeaponIndex = PlayerDataManager.Instance.GetCurrentWeaponIndex();
+        if (currentWeaponIndex >= 0 && currentWeaponIndex < inventoryWeaponObjects.Count)
+        {
+            SwitchWeapon(currentWeaponIndex);
+        }
+        else if (inventoryWeaponObjects.Count > 0)
+        {
+            SwitchWeapon(0);
+        }
+
+        UpdateAmmoUI();
     }
 
     void Update()
@@ -52,19 +94,34 @@ public class PlayerController : MonoBehaviour
         RotateToMouse();
         UpdateCameraPosition();
 
-        // Стрельба теперь управляется через Weapon.
-        // Если хочешь стрелять по направлению взгляда игрока (например, transform.right), можешь раскомментировать:
-         if (Input.GetMouseButtonDown(0) && currentWeapon != null)
-         {
-             currentWeapon.Fire(transform.right);
-         }
-        
-        
+        if (Input.GetMouseButtonDown(0) && currentWeapon != null)
+        {
+            currentWeapon.Fire(transform.right);
+            UpdateAmmoUI();
+            if (currentWeapon.GetCurrentAmmo() <= 0)
+            {
+                StartCoroutine(ShakeAmmoText());
+            }
+        }
 
-        // Перезарядка по нажатию R
         if (Input.GetKeyDown(KeyCode.R) && currentWeapon != null)
         {
             currentWeapon.Reload();
+            UpdateAmmoUI();
+            StartCoroutine(WaitForReload()); // Запускаем корутину для ожидания перезарядки
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha1) && inventoryWeaponObjects.Count >= 1)
+        {
+            SwitchWeapon(0);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2) && inventoryWeaponObjects.Count >= 2)
+        {
+            SwitchWeapon(1);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3) && inventoryWeaponObjects.Count >= 3)
+        {
+            SwitchWeapon(2);
         }
     }
 
@@ -107,5 +164,83 @@ public class PlayerController : MonoBehaviour
         float xShake = (Mathf.PerlinNoise(Time.time * shakeSpeed, shakeTimeOffsetX) - 0.5f) * shakeIntensity;
         float yShake = (Mathf.PerlinNoise(Time.time * shakeSpeed, shakeTimeOffsetY) - 0.5f) * shakeIntensity;
         return new Vector3(xShake, yShake, 0);
+    }
+
+    public void SwitchWeapon(int index)
+    {
+        if (index < 0 || index >= inventoryWeaponObjects.Count)
+            return;
+
+        if (currentWeaponObject != null)
+            currentWeaponObject.SetActive(false);
+
+        currentWeaponObject = inventoryWeaponObjects[index];
+        currentWeaponObject.SetActive(true);
+        currentWeapon = currentWeaponObject.GetComponent<Weapon>();
+        currentWeaponIndex = index;
+
+        PlayerDataManager.Instance.SetCurrentWeaponIndex(index);
+
+        InventoryUI inventoryUI = FindObjectOfType<InventoryUI>();
+        if (inventoryUI != null)
+        {
+            inventoryUI.HighlightActiveWeapon(index);
+        }
+
+        UpdateAmmoUI();
+    }
+
+    private void UpdateAmmoUI()
+    {
+        if (ammoText == null || currentWeapon == null)
+            return;
+
+        if (currentWeapon.IsReloading())
+        {
+            ammoText.text = "//reloading.exe";
+        }
+        else
+        {
+            ammoText.text = $"{currentWeapon.GetCurrentAmmo()} / {currentWeapon.GetTotalAmmo()}";
+        }
+    }
+
+    IEnumerator ShakeAmmoText()
+    {
+        if (ammoText == null)
+            yield break;
+
+        Vector3 originalPos = ammoText.transform.localPosition;
+        Color originalColor = ammoText.color;
+        ammoText.color = Color.red;
+
+        float duration = 0.5f;
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            float offsetX = Random.Range(-5f, 5f);
+            float offsetY = Random.Range(-5f, 5f);
+            ammoText.transform.localPosition = originalPos + new Vector3(offsetX, offsetY, 0);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        ammoText.transform.localPosition = originalPos;
+        ammoText.color = originalColor;
+    }
+
+    // Новая корутина для ожидания перезарядки
+    IEnumerator WaitForReload()
+    {
+        if (currentWeapon == null)
+            yield break;
+
+        // Ждём, пока перезарядка не завершится
+        while (currentWeapon.IsReloading())
+        {
+            yield return null;
+        }
+
+        // После завершения перезарядки обновляем UI
+        UpdateAmmoUI();
     }
 }
