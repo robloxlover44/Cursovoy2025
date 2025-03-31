@@ -1,11 +1,16 @@
 using UnityEngine;
 using System.Collections.Generic;
+
 public class PlayerDataManager : MonoBehaviour
 {
     public static PlayerDataManager Instance { get; private set; }
     private PlayerDataModel playerData;
+    private int health; // Текущее здоровье, не сохраняется
 
     private const string DATA_KEY = "PlayerData";
+
+    // Событие, которое будет вызываться при изменении здоровья
+    public event System.Action OnHealthChanged;
 
     private void Awake()
     {
@@ -18,6 +23,8 @@ public class PlayerDataManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
         LoadData();
+        health = playerData.maxHealth; // Устанавливаем текущее здоровье равным максимальному
+        OnHealthChanged?.Invoke(); // Уведомляем подписчиков о начальном состоянии
     }
 
     private void LoadData()
@@ -43,7 +50,8 @@ public class PlayerDataManager : MonoBehaviour
 
     public int GetMoney() => playerData.money;
     public int GetShards() => playerData.shards;
-    public int GetHealth() => playerData.health;
+    public int GetHealth() => health;
+    public int GetMaxHealth() => playerData.maxHealth;
 
     public void AddMoney(int amount)
     {
@@ -59,8 +67,9 @@ public class PlayerDataManager : MonoBehaviour
 
     public void AddHealth(int amount)
     {
-        playerData.AddHealth(amount);
-        SaveData();
+        health += amount;
+        if (health > playerData.maxHealth) health = playerData.maxHealth;
+        OnHealthChanged?.Invoke(); // Уведомляем о изменении здоровья
     }
 
     public bool SpendMoney(int amount)
@@ -79,11 +88,27 @@ public class PlayerDataManager : MonoBehaviour
 
     public bool SpendHealth(int amount)
     {
-        bool success = playerData.SpendHealth(amount);
-        if (success) SaveData();
-        return success;
+        if (health >= amount)
+        {
+            health -= amount;
+            OnHealthChanged?.Invoke(); // Уведомляем о изменении здоровья
+            return true;
+        }
+        return false;
     }
 
+    public void UpgradeMaxHealth(int newMaxHealth)
+    {
+        playerData.maxHealth = newMaxHealth;
+        health = playerData.maxHealth;
+        SaveData();
+        OnHealthChanged?.Invoke(); // Уведомляем о изменении здоровья
+    }
+    public void RefreshHealth()
+        {
+            health = playerData.maxHealth; // Устанавливаем здоровье на максимум
+            OnHealthChanged?.Invoke(); // Уведомляем подписчиков
+        }
     public void AddWeaponToInventory(string weaponID)
     {
         if (string.IsNullOrEmpty(weaponID))
@@ -115,6 +140,8 @@ public class PlayerDataManager : MonoBehaviour
     public void ResetData()
     {
         playerData = new PlayerDataModel();
+        health = playerData.maxHealth;
         SaveData();
+        OnHealthChanged?.Invoke(); // Уведомляем о сбросе
     }
 }

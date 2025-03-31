@@ -31,6 +31,10 @@ public class PlayerController : MonoBehaviour
     private float shakeTimeOffsetX;
     private float shakeTimeOffsetY;
 
+    [Header("Death Settings")]
+    public Sprite[] deathSprites;
+    public GameObject gameOverPanel;
+    public float deathAnimationSpeed = 0.2f;
     public Weapon currentWeapon;
 
     [Header("UI Settings")]
@@ -83,9 +87,10 @@ public class PlayerController : MonoBehaviour
 
         UpdateAmmoUI();
     }
-
+    private bool isDead = false; // Флаг смерти
     void Update()
     {
+        if (isDead) return;
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
         isMoving = movement.sqrMagnitude > 0;
@@ -108,7 +113,7 @@ public class PlayerController : MonoBehaviour
         {
             currentWeapon.Reload();
             UpdateAmmoUI();
-            StartCoroutine(WaitForReload()); // Запускаем корутину для ожидания перезарядки
+            StartCoroutine(WaitForReload());
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha1) && inventoryWeaponObjects.Count >= 1)
@@ -123,6 +128,7 @@ public class PlayerController : MonoBehaviour
         {
             SwitchWeapon(2);
         }
+
     }
 
     void FixedUpdate()
@@ -139,6 +145,49 @@ public class PlayerController : MonoBehaviour
             animationTimer = 0f;
             currentFrame = (currentFrame + 1) % (isMoving ? runSprites.Length : idleSprites.Length);
             spriteRenderer.sprite = isMoving ? runSprites[currentFrame] : idleSprites[currentFrame];
+        }
+    }
+
+    public void TakeDamage(int damage)
+    {
+        if (isDead) return; // Не обрабатываем урон, если уже мёртв
+
+        if (PlayerDataManager.Instance.SpendHealth(damage))
+        {
+            Debug.Log($"Игрок получил {damage} урона. Текущее здоровье: {PlayerDataManager.Instance.GetHealth()}");
+        }
+
+        if (PlayerDataManager.Instance.GetHealth() <= 0)
+        {
+            StartCoroutine(PlayDeathAnimation());
+        }
+    }
+    
+    IEnumerator PlayDeathAnimation()
+    {
+        isDead = true; // Устанавливаем флаг смерти
+        rb.linearVelocity = Vector2.zero;
+        rb.isKinematic = true;
+        GetComponent<Collider2D>().enabled = false;
+
+        foreach (Sprite frame in deathSprites)
+        {
+            spriteRenderer.sprite = frame;
+            yield return new WaitForSeconds(deathAnimationSpeed);
+        }
+
+        ShowGameOverPanel();
+        gameObject.SetActive(false); // Деактивируем игрока после анимации
+        // Или можно использовать Destroy(gameObject), если игрок не нужен до перезапуска сцены
+    }
+
+    void ShowGameOverPanel()
+    {
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(true);
+            gameOverPanel.transform.localScale = Vector3.zero;
+            LeanTween.scale(gameOverPanel, Vector3.one, 0.5f).setEaseOutBounce();
         }
     }
 
@@ -228,19 +277,16 @@ public class PlayerController : MonoBehaviour
         ammoText.color = originalColor;
     }
 
-    // Новая корутина для ожидания перезарядки
     IEnumerator WaitForReload()
     {
         if (currentWeapon == null)
             yield break;
 
-        // Ждём, пока перезарядка не завершится
         while (currentWeapon.IsReloading())
         {
             yield return null;
         }
 
-        // После завершения перезарядки обновляем UI
         UpdateAmmoUI();
     }
 }

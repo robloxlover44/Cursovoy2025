@@ -72,18 +72,21 @@ public class ChaseEnemy : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+void OnCollisionEnter2D(Collision2D collision)
+{
+    if (collision.gameObject.CompareTag("Player") && currentState != EnemyState.Exploding)
     {
-        if (collision.gameObject.CompareTag("Player") && currentState != EnemyState.Exploding)
+        PlayerController playerController = collision.gameObject.GetComponent<PlayerController>();
+        if (playerController != null)
         {
-            // При столкновении отнимаем здоровье у игрока, используя данные из PlayerData
-            PlayerDataManager.Instance.SpendHealth(damage);
-
-            currentState = EnemyState.Exploding;
-            StopAllCoroutines();
-            StartCoroutine(PlayExplosion());
+            playerController.TakeDamage(damage); // Передаём урон игроку
         }
+
+        currentState = EnemyState.Exploding;
+        StopAllCoroutines();
+        StartCoroutine(PlayExplosion());
     }
+}
 
     void StartAnimation(Sprite[] frames)
     {

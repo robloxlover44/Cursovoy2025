@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Projectile : MonoBehaviour
+public class PlayerDamagingProjectile : MonoBehaviour
 {
     public float speed = 10f; // Скорость пули
     public int damage = 50; // Урон, наносимый пулей, настраивается в инспекторе
@@ -20,24 +20,14 @@ public class Projectile : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Enemy") && other is EdgeCollider2D)
+        if (other.CompareTag("Player"))
         {
-            // Проверяем ChaseEnemy
-            ChaseEnemy chaseEnemy = other.GetComponent<ChaseEnemy>();
-            if (chaseEnemy != null)
+            PlayerController player = other.GetComponent<PlayerController>(); // Получаем компонент игрока
+            if (player != null)
             {
-                chaseEnemy.TakeDamage(damage); // Наносим урон ChaseEnemy
-                Destroy(gameObject); // Уничтожаем пулю после попадания
-                return; // Выходим, чтобы не проверять дальше
+                player.TakeDamage(damage); // Наносим урон игроку
             }
-
-            // Проверяем ShooterEnemy
-            ShooterEnemy shooterEnemy = other.GetComponent<ShooterEnemy>();
-            if (shooterEnemy != null)
-            {
-                shooterEnemy.TakeDamage(damage); // Наносим урон ShooterEnemy
-                Destroy(gameObject); // Уничтожаем пулю после попадания
-            }
+            Destroy(gameObject); // Уничтожаем пулю после попадания
         }
         else if (other.CompareTag("Wall") || other.CompareTag("Obstacle"))
         {

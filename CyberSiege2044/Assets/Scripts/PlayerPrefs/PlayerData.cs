@@ -7,23 +7,21 @@ public class PlayerDataModel
 {
     public int money;
     public int shards;
-    public int health; // Добавляем здоровье
+    public int maxHealth; // Максимальное здоровье, которое сохраняется
     public List<string> inventoryWeapons = new List<string>();
     public int currentWeaponIndex;
-    
 
     public PlayerDataModel()
     {
         money = 0;
         shards = 0;
-        health = 100; // Задаем начальное значение здоровья, например 100
+        maxHealth = 100; // Начальное значение максимального здоровья
         currentWeaponIndex = -1; // -1 означает, что оружие не выбрано
     }
 
-    // Методы для работы с валютами и здоровьем
+    // Методы для работы с валютами
     public void AddMoney(int amount) => money += amount;
     public void AddShards(int amount) => shards += amount;
-    public void AddHealth(int amount) => health += amount; // Добавляем метод для прибавления здоровья
 
     public bool SpendMoney(int amount)
     {
@@ -40,16 +38,6 @@ public class PlayerDataModel
         if (shards >= amount)
         {
             shards -= amount;
-            return true;
-        }
-        return false;
-    }
-
-    public bool SpendHealth(int amount) // Добавляем метод для траты здоровья
-    {
-        if (health >= amount)
-        {
-            health -= amount;
             return true;
         }
         return false;

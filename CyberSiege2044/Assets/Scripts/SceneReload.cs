@@ -1,32 +1,18 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI; // Для работы с UI
 
-public class SceneReload : MonoBehaviour
+public class SceneReloader : MonoBehaviour
 {
-    [SerializeField] private Button reloadButton; // Ссылка на кнопку в инспекторе
-
-    void Start()
+    public void ReloadScene()
     {
-        // Добавляем слушатель к кнопке
-        if (reloadButton != null)
+        string currentSceneName = SceneManager.GetActiveScene().name;
+
+        // Обновляем здоровье через публичный метод
+        if (PlayerDataManager.Instance != null)
         {
-            reloadButton.onClick.AddListener(ReloadScene);
+            PlayerDataManager.Instance.RefreshHealth(); // Устанавливаем здоровье и уведомляем
         }
-    }
 
-    void ReloadScene()
-    {
-        // Перезагружаем текущую сцену
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
-    // Убираем слушатель при уничтожении объекта (хорошая практика)
-    void OnDestroy()
-    {
-        if (reloadButton != null)
-        {
-            reloadButton.onClick.RemoveListener(ReloadScene);
-        }
+        SceneManager.LoadScene(currentSceneName);
     }
 }

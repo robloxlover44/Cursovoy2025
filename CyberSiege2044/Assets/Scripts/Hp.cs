@@ -4,9 +4,8 @@ using UnityEngine.UI;
 
 public class HealthBar : MonoBehaviour
 {
-    [SerializeField] private TMP_Text healthText; // ������ �� TextMeshPro ��� ����������� ��������
-    [SerializeField] private Slider healthSlider; // ������ �� ������� ��� HP-����
-    [SerializeField] private int maxHealth = 100; // ������������ �������� (������������� � ����������)
+    [SerializeField] private TMP_Text healthText;
+    [SerializeField] private Slider healthSlider;
 
     private void Start()
     {
@@ -21,16 +20,23 @@ public class HealthBar : MonoBehaviour
         }
         else
         {
-            healthSlider.minValue = 0; // ������������� ����������� �������� ��������
-            healthSlider.maxValue = maxHealth; // ������������� ������������ �������� ��������
+            healthSlider.minValue = 0;
+            if (PlayerDataManager.Instance != null)
+            {
+                healthSlider.maxValue = PlayerDataManager.Instance.GetMaxHealth();
+                PlayerDataManager.Instance.OnHealthChanged += UpdateHealthDisplay; // Подписываемся на событие
+            }
         }
 
-        UpdateHealthDisplay(); // ��������� ��� ������
+        UpdateHealthDisplay(); // Начальное обновление
     }
 
-    private void Update()
+    private void OnDestroy()
     {
-        UpdateHealthDisplay(); // ��������� ������ ���� (����� ��������������, ���� �����)
+        if (PlayerDataManager.Instance != null)
+        {
+            PlayerDataManager.Instance.OnHealthChanged -= UpdateHealthDisplay; // Отписываемся при уничтожении
+        }
     }
 
     private void UpdateHealthDisplay()
@@ -38,8 +44,11 @@ public class HealthBar : MonoBehaviour
         if (PlayerDataManager.Instance != null && healthText != null && healthSlider != null)
         {
             int currentHealth = PlayerDataManager.Instance.GetHealth();
-            healthText.text = $"{currentHealth}"; // ���������� ������� � ������������ ��������
-            healthSlider.value = currentHealth; // �������������� ������� � ������� ���������
+            int maxHealth = PlayerDataManager.Instance.GetMaxHealth();
+
+            healthText.text = $"{currentHealth}/{maxHealth}";
+            healthSlider.value = currentHealth;
+            healthSlider.maxValue = maxHealth;
         }
     }
 }
