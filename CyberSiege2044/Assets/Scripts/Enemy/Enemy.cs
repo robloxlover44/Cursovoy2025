@@ -48,13 +48,20 @@ public class ChaseEnemy : MonoBehaviour
     }
 
     void ChasePlayer()
+{
+    if (Vector2.Distance(transform.position, player.position) > stoppingDistance)
     {
-        if (Vector2.Distance(transform.position, player.position) > stoppingDistance)
-        {
-            Vector2 direction = (player.position - transform.position).normalized;
-            transform.position += (Vector3)direction * chaseSpeed * Time.deltaTime;
-        }
+        Vector2 direction = (player.position - transform.position).normalized;
+        transform.position += (Vector3)direction * chaseSpeed * Time.deltaTime;
+
+        // Поворачиваем врага лицом к игроку
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0, 0, angle);
     }
+}
+
+
+
 
     void OnTriggerEnter2D(Collider2D other)
     {
