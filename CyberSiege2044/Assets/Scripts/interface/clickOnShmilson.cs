@@ -1,12 +1,12 @@
 using UnityEngine;
-using UnityEngine.UI; // Для работы с UI
+using UnityEngine.UI; // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ UI
 
 public class ResourceButton : MonoBehaviour
 {
     public enum ResourceType { Money, Shards }
     public ResourceType resourceType;
-    public int amount = 1; // Количество ресурсов
-    private bool hasBeenClicked = false; // Флаг, чтобы нажималось только один раз
+    public int amount = 1; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    private bool hasBeenClicked = false; // пїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
 
     private void Start()
     {
@@ -14,7 +14,7 @@ public class ResourceButton : MonoBehaviour
 
         if (button == null)
         {
-            Debug.LogError("[ResourceButton] Ошибка: Скрипт висит не на кнопке!");
+            Debug.LogError("[ResourceButton] пїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ!");
             return;
         }
 
@@ -23,11 +23,11 @@ public class ResourceButton : MonoBehaviour
 
     private void GiveResource()
     {
-        if (hasBeenClicked) return; // Если уже нажимали – выходим
+        if (hasBeenClicked) return; // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
         if (PlayerDataManager.Instance == null)
         {
-            Debug.LogError("[ResourceButton] Ошибка: PlayerDataManager.Instance == null!");
+            Debug.LogError("[ResourceButton] пїЅпїЅпїЅпїЅпїЅпїЅ: PlayerDataManager.Instance == null!");
             return;
         }
 
@@ -41,7 +41,7 @@ public class ResourceButton : MonoBehaviour
                 break;
         }
 
-        Debug.Log($"[ResourceButton] {amount} {resourceType} добавлено!");
-        hasBeenClicked = true; // Больше нельзя нажать
+        Debug.Log($"[ResourceButton] {amount} {resourceType} пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ!");
+        hasBeenClicked = true; // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     }
 }

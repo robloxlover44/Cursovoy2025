@@ -5,55 +5,55 @@ using static LeanTween;
 
 public class DialogueSystemFP : MonoBehaviour
 {
-    [Header("Настройки диалога")]
-    [SerializeField] private GameObject dialogBox1;           // Первое диалоговое окно
-    [SerializeField] private GameObject dialogBox2;           // Второе диалоговое окно
-    [SerializeField] private CanvasGroup dialogCanvasGroup1;  // CanvasGroup для анимации первого окна
-    [SerializeField] private CanvasGroup dialogCanvasGroup2;  // CanvasGroup для анимации второго окна
-    [SerializeField] private TextMeshProUGUI dialogText1;     // Текст первого окна
-    [SerializeField] private TextMeshProUGUI dialogText2;     // Текст второго окна
-    [SerializeField] private Transform speakerIcon1;          // Иконка первого говорящего
-    [SerializeField] private Transform speakerIcon2;          // Иконка второго говорящего
-    [SerializeField] private float typingSpeed = 0.05f;       // Скорость набора текста
-    [SerializeField] private KeyCode nextKey = KeyCode.Space; // Клавиша для перехода к следующей реплике
+    [Header("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ")]
+    [SerializeField] private GameObject dialogBox1;           // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+    [SerializeField] private GameObject dialogBox2;           // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+    [SerializeField] private CanvasGroup dialogCanvasGroup1;  // CanvasGroup пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+    [SerializeField] private CanvasGroup dialogCanvasGroup2;  // CanvasGroup пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+    [SerializeField] private TextMeshProUGUI dialogText1;     // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+    [SerializeField] private TextMeshProUGUI dialogText2;     // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+    [SerializeField] private Transform speakerIcon1;          // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    [SerializeField] private Transform speakerIcon2;          // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    [SerializeField] private float typingSpeed = 0.05f;       // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+    [SerializeField] private KeyCode nextKey = KeyCode.Space; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
-    [Header("Данные диалога")]
-    [SerializeField] private string[] dialogue;               // Массив реплик
-    [SerializeField] private bool[] isSpeaker1;               // Кто говорит: true — первый, false — второй
+    [Header("пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ")]
+    [SerializeField] private string[] dialogue;               // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+    [SerializeField] private bool[] isSpeaker1;               // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ: true пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, false пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 
-    [Header("Звук")]
-    [SerializeField] private AudioSource audioSource;         // Источник звука для диалога
+    [Header("пїЅпїЅпїЅпїЅ")]
+    [SerializeField] private AudioSource audioSource;         // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
-    [Header("Задержка перед диалогом")]
-    [SerializeField] private float delayBeforeDialogue = 0.5f; // Задержка перед стартом (настраивается в инспекторе)
+    [Header("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ")]
+    [SerializeField] private float delayBeforeDialogue = 0.5f; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
 
-    private int currentLine = 0;         // Текущая реплика
-    private bool isPaused = false;       // Флаг паузы игры
-    private bool isTyping = false;       // Флаг набора текста
-    private Coroutine typingCoroutine;   // Корутина для набора текста
+    private int currentLine = 0;         // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    private bool isPaused = false;       // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+    private bool isTyping = false;       // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+    private Coroutine typingCoroutine;   // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 
     private void Start()
     {
-        // Изначально скрываем диалоговые окна
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
         dialogBox1.SetActive(false);
         dialogBox2.SetActive(false);
 
-        // Запускаем диалог с задержкой
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         StartCoroutine(StartDialogueAfterDelay());
     }
 
     private IEnumerator StartDialogueAfterDelay()
     {
-        // Ждем указанное время
+        // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         yield return new WaitForSeconds(delayBeforeDialogue);
 
-        // Запускаем диалог
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         StartDialogue();
     }
 
     private void Update()
     {
-        // Переход к следующей реплике по нажатию клавиши
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         if (isPaused && Input.GetKeyDown(nextKey))
         {
             ShowNextLine();
@@ -63,16 +63,16 @@ public class DialogueSystemFP : MonoBehaviour
     private void StartDialogue()
     {
         isPaused = true;
-        Time.timeScale = 0f; // Останавливаем время в игре
+        Time.timeScale = 0f; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ
         currentLine = 0;
 
-        // Показываем окна и очищаем текст
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         dialogBox1.SetActive(true);
         dialogBox2.SetActive(true);
         dialogText1.text = "";
         dialogText2.text = "";
 
-        // Начинаем с первой реплики
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         ShowNextLine();
     }
 
@@ -84,7 +84,7 @@ public class DialogueSystemFP : MonoBehaviour
             return;
         }
 
-        // Очищаем текст для новой пары реплик
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
         if (currentLine % 2 == 0)
         {
             dialogText1.text = "";
@@ -168,10 +168,11 @@ public class DialogueSystemFP : MonoBehaviour
     private void EndDialogue()
     {
         isPaused = false;
-        Time.timeScale = 1f; // Возвращаем время
+        Time.timeScale = 1f; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         LeanTween.alphaCanvas(dialogCanvasGroup1, 0f, 0.5f)
             .setIgnoreTimeScale(true);
         LeanTween.alphaCanvas(dialogCanvasGroup2, 0f, 0.5f)
             .setIgnoreTimeScale(true);
     }
 }
+

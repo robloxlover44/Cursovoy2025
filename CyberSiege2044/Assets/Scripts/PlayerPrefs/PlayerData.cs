@@ -13,7 +13,7 @@ public class PlayerDataModel
 
     public PlayerDataModel()
     {
-        money = 0;
+        money = 50;
         shards = 0;
         maxHealth = 100; // Начальное значение максимального здоровья
         currentWeaponIndex = -1; // -1 означает, что оружие не выбрано

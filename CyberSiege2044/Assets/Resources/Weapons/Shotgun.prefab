@@ -78,7 +78,6 @@ MonoBehaviour:
   projectilePrefab: {fileID: 8557163692020594784, guid: 868d6fce80f688c48b651e929ec686fe, type: 3}
   firePoint: {fileID: 4434729934622055524}
   fireRate: 1
-  ammoText: {fileID: 0}
 --- !u!114 &6993456143805232744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -205,12 +204,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: -2408530018317867212, guid: 17044bfb695cd79478c2353bcc38ed4c, type: 3}
+  m_Sprite: {fileID: 2894344322067435035, guid: 4d8910ecea93b8d41b260265a7f51f65, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 4.86, y: 1.7}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
