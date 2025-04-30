@@ -2015,7 +2015,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -523.76, y: 208}
+  m_AnchoredPosition: {x: -523.75995, y: 208}
   m_SizeDelta: {x: -1544.5393, y: -685.53033}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &976962948
@@ -3763,7 +3763,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -364.20996, y: -173}
+  m_AnchoredPosition: {x: -364.2099, y: -173}
   m_SizeDelta: {x: -878.5489, y: -506.73}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1978171184
@@ -3904,7 +3904,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b25639315a24254789f39c77687058b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scene: 0
+  scene: 1
 --- !u!95 &2028157520
 Animator:
   serializedVersion: 7
