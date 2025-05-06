@@ -6,6 +6,7 @@ using static LeanTween;
 public class DialogueSystem : MonoBehaviour
 {
     [Header("Настройки диалога")]
+    [SerializeField] private GameObject bg;
     [SerializeField] private GameObject dialogBox1;
     [SerializeField] private GameObject dialogBox2;
     [SerializeField] private CanvasGroup dialogCanvasGroup1;
@@ -35,6 +36,7 @@ public class DialogueSystem : MonoBehaviour
         // Изначально отключаем диалоговые окна
         dialogBox1.SetActive(false);
         dialogBox2.SetActive(false);
+        bg.SetActive(false);
         triggerCollider = GetComponent<Collider2D>();
         if (triggerCollider == null)
         {
@@ -81,6 +83,7 @@ public class DialogueSystem : MonoBehaviour
         // Активируем оба окна и очищаем их текст при старте диалога
         dialogBox1.SetActive(true);
         dialogBox2.SetActive(true);
+        bg.SetActive(true);
         dialogText1.text = "";
         dialogText2.text = "";
         
@@ -188,6 +191,7 @@ public class DialogueSystem : MonoBehaviour
         isPaused = false;
         Time.timeScale = 1f;
         // Плавно исчезают оба окна
+        bg.SetActive(false);
         LeanTween.alphaCanvas(dialogCanvasGroup1, 0f, 0.5f)
             .setIgnoreTimeScale(true);
         LeanTween.alphaCanvas(dialogCanvasGroup2, 0f, 0.5f)
