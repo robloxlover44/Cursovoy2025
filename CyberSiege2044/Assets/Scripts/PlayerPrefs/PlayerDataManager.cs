@@ -1,16 +1,23 @@
 using UnityEngine;
-using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 public class PlayerDataManager : MonoBehaviour
 {
     public static PlayerDataManager Instance { get; private set; }
+
+    [Header("Список уровней по порядку")]
+    public List<string> levelSceneNames = new List<string>();
+
+    [Header("Scenes to save checkpoint on")]
+    public List<string> checkpointScenes = new List<string>();
+
     private PlayerDataModel playerData;
-    private int health; // Текущее здоровье, не сохраняется
-
+    private int health;
+    private PlayerDataModel checkpointData;
     private const string DATA_KEY = "PlayerData";
+    private int portalEntryCount = 0; // Счётчик заходов в портал
 
-    // Событие, которое будет вызываться при изменении здоровья
     public event System.Action OnHealthChanged;
 
     private void Awake()
@@ -23,20 +30,22 @@ public class PlayerDataManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
         LoadData();
-        health = playerData.maxHealth; // Устанавливаем текущее здоровье равным максимальному
-        OnHealthChanged?.Invoke(); // Уведомляем подписчиков о начальном состоянии
+        health = playerData.maxHealth;
+        LoadCheckpointState();
+        OnHealthChanged?.Invoke();
+
         SceneManager.sceneLoaded += OnSceneLoaded;
+        Debug.Log("PlayerDataManager инициализирован");
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // Если зашли в сцену уровня напрямую, синхронизируем playerData.currentLevel
-        int buildIndex = scene.buildIndex;
-        if (scene.name.StartsWith("Level_"))
+        if (checkpointScenes.Contains(scene.name))
         {
-            playerData.currentLevel = buildIndex;
-            SaveData();
+            SaveCheckpointState();
+            Debug.Log("Чекпоинт сохранён на сцене: " + scene.name);
         }
     }
 
@@ -46,6 +55,8 @@ public class PlayerDataManager : MonoBehaviour
         {
             string json = PlayerPrefs.GetString(DATA_KEY);
             playerData = JsonUtility.FromJson<PlayerDataModel>(json);
+            portalEntryCount = playerData.portalEntryCount; // Загружаем счётчик
+            Debug.Log($"Загружен portalEntryCount: {portalEntryCount}");
         }
         else
         {
@@ -56,24 +67,70 @@ public class PlayerDataManager : MonoBehaviour
 
     private void SaveData()
     {
+        playerData.portalEntryCount = portalEntryCount; // Сохраняем счётчик
         string json = JsonUtility.ToJson(playerData);
         PlayerPrefs.SetString(DATA_KEY, json);
         PlayerPrefs.Save();
+        Debug.Log($"Сохранён portalEntryCount: {portalEntryCount}");
     }
 
-
-    public int GetNextLevelIndex()
+    public void SaveCheckpointState()
     {
-        return playerData.currentLevel + 1;
+        checkpointData = new PlayerDataModel
+        {
+            money = playerData.money,
+            shards = playerData.shards,
+            maxHealth = playerData.maxHealth,
+            inventoryWeapons = new List<string>(playerData.inventoryWeapons),
+            currentWeaponIndex = playerData.currentWeaponIndex,
+            portalEntryCount = portalEntryCount
+        };
+        checkpointData.SetHealth(health);
     }
 
-    // После прохождения уровня вызываем этот метод
-    public void AdvanceToNextLevel()
+    public void LoadCheckpointState()
     {
-        playerData.currentLevel++;
-        SaveData();
-        SceneManager.LoadScene(playerData.currentLevel);
+        if (checkpointData != null)
+        {
+            Debug.Log("Загружаем данные чекпоинта:");
+            Debug.Log($"HP: {checkpointData.GetHealth()}, Money: {checkpointData.money}, Shards: {checkpointData.shards}, Weapons: {string.Join(",", checkpointData.inventoryWeapons)}, PortalEntryCount: {checkpointData.portalEntryCount}");
+
+            health = checkpointData.GetHealth();
+            playerData.money = checkpointData.money;
+            playerData.shards = checkpointData.shards;
+            playerData.maxHealth = checkpointData.maxHealth;
+            playerData.inventoryWeapons = new List<string>(checkpointData.inventoryWeapons);
+            playerData.currentWeaponIndex = checkpointData.currentWeaponIndex;
+            portalEntryCount = checkpointData.portalEntryCount;
+            SaveData();
+            OnHealthChanged?.Invoke();
+        }
+        else
+        {
+            Debug.LogWarning("Чекпоинт не найден, загрузка невозможна!");
+        }
     }
+
+    public void LoadNextLevel()
+    {
+        portalEntryCount++; // Увеличиваем счётчик заходов
+        Debug.Log($"portalEntryCount увеличен до: {portalEntryCount}");
+
+        int sceneIndex = portalEntryCount - 1; // Индекс сцены (первый заход = индекс 0)
+        if (sceneIndex >= 0 && sceneIndex < levelSceneNames.Count)
+        {
+            string nextScene = levelSceneNames[sceneIndex];
+            Debug.Log($"Загружаем сцену: {nextScene} (индекс: {sceneIndex})");
+            SceneManager.LoadScene(nextScene);
+            SaveData(); // Сохраняем счётчик
+        }
+        else
+        {
+            Debug.LogWarning($"Сцена с индексом {sceneIndex} не найдена! Количество сцен: {levelSceneNames.Count}");
+        }
+    }
+
+    public int GetPortalEntryCount() => portalEntryCount;
 
     public int GetMoney() => playerData.money;
     public int GetShards() => playerData.shards;
@@ -96,7 +153,7 @@ public class PlayerDataManager : MonoBehaviour
     {
         health += amount;
         if (health > playerData.maxHealth) health = playerData.maxHealth;
-        OnHealthChanged?.Invoke(); // Уведомляем о изменении здоровья
+        OnHealthChanged?.Invoke();
     }
 
     public bool SpendMoney(int amount)
@@ -118,7 +175,7 @@ public class PlayerDataManager : MonoBehaviour
         if (health >= amount)
         {
             health -= amount;
-            OnHealthChanged?.Invoke(); // Уведомляем о изменении здоровья
+            OnHealthChanged?.Invoke();
             return true;
         }
         return false;
@@ -129,29 +186,27 @@ public class PlayerDataManager : MonoBehaviour
         playerData.maxHealth = newMaxHealth;
         health = playerData.maxHealth;
         SaveData();
-        OnHealthChanged?.Invoke(); // Уведомляем о изменении здоровья
-    }
-    public void RefreshHealth()
-        {
-            health = playerData.maxHealth; // Устанавливаем здоровье на максимум
-            OnHealthChanged?.Invoke(); // Уведомляем подписчиков
-        }
-    public void AddWeaponToInventory(string weaponID)
-    {
-        if (string.IsNullOrEmpty(weaponID))
-        {
-            Debug.LogError("WeaponID is null or empty!");
-            return;
-        }
-        playerData.inventoryWeapons.Add(weaponID);
-        Debug.Log($"Added {weaponID} to inventory");
-        SaveData();
+        OnHealthChanged?.Invoke();
     }
 
-    public List<string> GetInventoryWeapons()
+    public void RefreshHealth()
     {
-        return playerData.inventoryWeapons;
+        health = playerData.maxHealth;
+        OnHealthChanged?.Invoke();
     }
+
+    public void AddWeaponToInventory(string weaponID)
+    {
+        if (string.IsNullOrEmpty(weaponID)) return;
+        if (!playerData.inventoryWeapons.Contains(weaponID))
+        {
+            playerData.inventoryWeapons.Add(weaponID);
+            Debug.Log($"Added {weaponID} to inventory");
+            SaveData();
+        }
+    }
+
+    public List<string> GetInventoryWeapons() => playerData.inventoryWeapons;
 
     public void SetCurrentWeaponIndex(int index)
     {
@@ -159,16 +214,22 @@ public class PlayerDataManager : MonoBehaviour
         SaveData();
     }
 
-    public int GetCurrentWeaponIndex()
-    {
-        return playerData.currentWeaponIndex;
-    }
+    public int GetCurrentWeaponIndex() => playerData.currentWeaponIndex;
 
     public void ResetData()
     {
         playerData = new PlayerDataModel();
         health = playerData.maxHealth;
+        portalEntryCount = 0; // Сбрасываем счётчик
         SaveData();
-        OnHealthChanged?.Invoke(); // Уведомляем о сбросе
+        OnHealthChanged?.Invoke();
     }
+}
+
+// Расширение модели под здоровье чекпоинта
+public static class PlayerDataModelExtensions
+{
+    private static int checkpointHealth;
+    public static void SetHealth(this PlayerDataModel data, int hp) => checkpointHealth = hp;
+    public static int GetHealth(this PlayerDataModel data) => checkpointHealth;
 }

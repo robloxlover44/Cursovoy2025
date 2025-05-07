@@ -10,15 +10,15 @@ public class PlayerDataModel
     public int maxHealth; // Максимальное здоровье, которое сохраняется
     public List<string> inventoryWeapons = new List<string>();
     public int currentWeaponIndex;
-    public int currentLevel;
+    public int portalEntryCount; // Счётчик заходов в портал
 
     public PlayerDataModel()
     {
-        money = 50;
+        money = 60;
         shards = 0;
         maxHealth = 100; // Начальное значение максимального здоровья
-        currentWeaponIndex = -1;
-        currentLevel = 1; // -1 означает, что оружие не выбрано
+        currentWeaponIndex = -1; // -1 означает, что оружие не выбрано
+        portalEntryCount = 0; // Начинаем с 0
     }
 
     // Методы для работы с валютами
@@ -43,5 +43,12 @@ public class PlayerDataModel
             return true;
         }
         return false;
+    }
+
+    public PlayerDataModel Clone()
+    {
+        // Глубокая копия через сериализацию в JSON и обратно
+        string json = JsonUtility.ToJson(this);
+        return JsonUtility.FromJson<PlayerDataModel>(json);
     }
 }

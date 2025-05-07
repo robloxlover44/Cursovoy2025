@@ -104,17 +104,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
-  rotationSpeed: 200
-  spriteRenderer: {fileID: 0}
-  idleSprites: []
-  runSprites: []
+  rotationSpeed: 2000
+  spriteRenderer: {fileID: 1913802726136418041}
+  idleSprites:
+  - {fileID: 308100624062084415, guid: 789cf6f4dd2c5b748bc2716b5103dca8, type: 3}
+  runSprites:
+  - {fileID: 7548083834808301637, guid: ca162d88ce0a9af418890caa3e292633, type: 3}
+  - {fileID: -4866748710115689693, guid: 61db4d3f60383bc44a31ce9e75ab38bb, type: 3}
+  - {fileID: 940885694740692502, guid: 00b182eabc59eac40a802d78a4fb83cc, type: 3}
+  - {fileID: -2087303058002744514, guid: 7a89b8cbc5c960146b4091210afd6648, type: 3}
   animationSpeed: 0.1
   cameraTransform: {fileID: 0}
   cameraOffset: {x: 0, y: 0, z: 0}
+  inventoryWeaponObjects: []
+  currentWeaponObject: {fileID: 0}
   shakeIntensity: 0.2
-  shakeSpeed: 5
-  projectilePrefab: {fileID: 0}
-  fireRate: 0.5
+  shakeSpeed: 1
+  deathSprites:
+  - {fileID: 2329968508516301233, guid: 5dad7b336950ea5428fffde2b4b81ab7, type: 3}
+  - {fileID: 3868168964778827105, guid: e3782d9d3bb976b47a3ad4d9a8b6943a, type: 3}
+  - {fileID: -9059419336718675167, guid: ce9e0ab78b5429f4695c3948462d2c94, type: 3}
+  - {fileID: 6449200995959292108, guid: bd6a456f6c5c5194da32e548338f320b, type: 3}
+  - {fileID: 2619169742342359055, guid: e933b56b7a890be438a2208b28248290, type: 3}
+  - {fileID: -1617549796846668659, guid: 969ab16b1df7f0546961ecf44c68a46a, type: 3}
+  - {fileID: 3140697666643866859, guid: f3460e31be045654b8a10265f49a3d7d, type: 3}
+  gameOverPanel: {fileID: 0}
+  deathAnimationSpeed: 0.2
+  currentWeapon: {fileID: 0}
+  ammoText: {fileID: 0}
 --- !u!50 &7955981932185155224
 Rigidbody2D:
   serializedVersion: 5

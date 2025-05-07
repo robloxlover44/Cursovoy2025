@@ -44,3 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54cd036ac5b776144ad0bc6043357563, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelSceneNames:
+  - LEVEL1
+  checkpointScenes:
+  - tutorial
+  - LEVEL1

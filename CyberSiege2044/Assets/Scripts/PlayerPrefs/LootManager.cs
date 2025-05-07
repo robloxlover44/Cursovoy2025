@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -20,39 +21,72 @@ public class UIManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+
+            SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else
         {
             Destroy(gameObject);
-            return;
         }
     }
 
-    /// <summary>
-    /// Показывает всплывающий текст с анимацией через LeanTween
-    /// </summary>
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        TryFindUIRefs();
+    }
+
+    private void TryFindUIRefs()
+    {
+        if (lootTextParent == null)
+        {
+            var go = GameObject.Find("LootTextParent");
+            if (go != null)
+                lootTextParent = go.GetComponent<RectTransform>();
+        }
+
+        if (lootTextPrefab == null)
+        {
+            // Альтернатива: можно найти префаб из ресурсов
+            lootTextPrefab = Resources.Load<TextMeshProUGUI>("LootTextPrefab");
+        }
+    }
+
     public void ShowLootText(int amount, string type)
     {
-        // Создаём копию текста в UI
+        if (lootTextParent == null || lootTextPrefab == null)
+        {
+            Debug.LogWarning("Loot text references missing! Trying to rebind...");
+            TryFindUIRefs();
+
+            if (lootTextParent == null || lootTextPrefab == null)
+            {
+                Debug.LogError("Cannot show loot text: references not found.");
+                return;
+            }
+        }
+
         TextMeshProUGUI txt = Instantiate(lootTextPrefab, lootTextParent);
         txt.text = $"+{amount} {type}";
 
-        // Рандомный отступ от центра
         float xOff = Random.Range(-maxOffset, maxOffset);
         float yOff = Random.Range(-maxOffset, maxOffset);
 
         Vector2 startPos = new Vector2(0, -minOffset) + new Vector2(xOff, yOff);
-        Vector2 topPos   = Vector2.zero + new Vector2(xOff, yOff);
-        Vector2 endPos   = new Vector2(0, -minOffset) + new Vector2(xOff, yOff);
+        Vector2 topPos = Vector2.zero + new Vector2(xOff, yOff);
+        Vector2 endPos = new Vector2(0, -minOffset) + new Vector2(xOff, yOff);
 
         RectTransform rt = txt.GetComponent<RectTransform>();
         rt.anchoredPosition = startPos;
 
-        // Scale эффект
         txt.transform.localScale = Vector3.zero;
         LeanTween.scale(txt.gameObject, Vector3.one, moveDuration * 0.5f).setEase(LeanTweenType.easeOutBack);
 
-        // Движение вверх, зависание, вниз
         LeanTween.move(rt, topPos, moveDuration).setEase(LeanTweenType.easeOutCubic).setOnComplete(() =>
         {
             LeanTween.delayedCall(holdDuration, () =>
@@ -64,7 +98,6 @@ public class UIManager : MonoBehaviour
             });
         });
 
-        // Радужная подсветка
         LeanTween.value(txt.gameObject, 0f, 1f, colorFlashRate)
             .setLoopPingPong()
             .setOnUpdate((float t) =>

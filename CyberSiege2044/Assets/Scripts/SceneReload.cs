@@ -1,3 +1,4 @@
+// SceneReloader.cs
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -5,14 +6,11 @@ public class SceneReloader : MonoBehaviour
 {
     public void ReloadScene()
     {
-        string currentSceneName = SceneManager.GetActiveScene().name;
-
-        // Обновляем здоровье через публичный метод
         if (PlayerDataManager.Instance != null)
         {
-            PlayerDataManager.Instance.RefreshHealth(); // Устанавливаем здоровье и уведомляем
+            PlayerDataManager.Instance.LoadCheckpointState(); // Возвращаемся к последнему чекпоинту
         }
 
-        SceneManager.LoadScene(currentSceneName);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
