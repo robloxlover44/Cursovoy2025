@@ -6,6 +6,8 @@ using static LeanTween;
 public class DialogueSystemFP : MonoBehaviour
 {
     [Header("��������� �������")]
+    [SerializeField] private GameObject bg;           
+
     [SerializeField] private GameObject dialogBox1;           // ������ ���������� ����
     [SerializeField] private GameObject dialogBox2;           // ������ ���������� ����
     [SerializeField] private CanvasGroup dialogCanvasGroup1;  // CanvasGroup ��� �������� ������� ����
@@ -37,6 +39,7 @@ public class DialogueSystemFP : MonoBehaviour
         // ���������� �������� ���������� ����
         dialogBox1.SetActive(false);
         dialogBox2.SetActive(false);
+        bg.SetActive(false);
 
         // ��������� ������ � ���������
         StartCoroutine(StartDialogueAfterDelay());
@@ -69,6 +72,7 @@ public class DialogueSystemFP : MonoBehaviour
         // ���������� ���� � ������� �����
         dialogBox1.SetActive(true);
         dialogBox2.SetActive(true);
+        bg.SetActive(true);
         dialogText1.text = "";
         dialogText2.text = "";
 
@@ -173,6 +177,7 @@ public class DialogueSystemFP : MonoBehaviour
             .setIgnoreTimeScale(true);
         LeanTween.alphaCanvas(dialogCanvasGroup2, 0f, 0.5f)
             .setIgnoreTimeScale(true);
+        bg.SetActive(false);
     }
 }
 

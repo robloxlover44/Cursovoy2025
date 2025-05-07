@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 838ca4a214c7e89459dddd3c3e86c3ce
+guid: 64d317d7f9b16ba46990d285ecc6c663
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 532992273623273898
-    second: '!$Fan_B_0_02_0'
+      213: 9142036059045459618
+    second: '!$Fan_B_0_06_0'
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -96,24 +96,11 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: '!$Fan_B_0_02_0'
+      name: '!$Fan_B_0_06_0'
       rect:
         serializedVersion: 2
         x: 0
@@ -128,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: aa1d75126a1956700800000000000000
-      internalID: 532992273623273898
+      spriteID: 2a6773feb590fde70800000000000000
+      internalID: 9142036059045459618
       vertices: []
       indices: 
       edges: []
@@ -147,8 +134,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      '!$Fan_B_0_02_0': 532992273623273898
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

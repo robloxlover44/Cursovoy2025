@@ -26,5 +26,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/bar Store/Real bar Store.unity
     guid: 3f2e7fc7e632f8a439ce05595d9664b9
+  - enabled: 1
+    path: Assets/Scenes/lvl.unity
+    guid: 25b6e12c4c1861e4b837d45e9915e378
+  - enabled: 1
+    path: Assets/Scenes/lvl 1.unity
+    guid: 679d37b437db1c24a9566fce850be2e5
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

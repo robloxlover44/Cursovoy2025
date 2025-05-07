@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class PlayerDataManager : MonoBehaviour
 {
@@ -25,6 +26,18 @@ public class PlayerDataManager : MonoBehaviour
         LoadData();
         health = playerData.maxHealth; // Устанавливаем текущее здоровье равным максимальному
         OnHealthChanged?.Invoke(); // Уведомляем подписчиков о начальном состоянии
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // Если зашли в сцену уровня напрямую, синхронизируем playerData.currentLevel
+        int buildIndex = scene.buildIndex;
+        if (scene.name.StartsWith("Level_"))
+        {
+            playerData.currentLevel = buildIndex;
+            SaveData();
+        }
     }
 
     private void LoadData()
@@ -46,6 +59,20 @@ public class PlayerDataManager : MonoBehaviour
         string json = JsonUtility.ToJson(playerData);
         PlayerPrefs.SetString(DATA_KEY, json);
         PlayerPrefs.Save();
+    }
+
+
+    public int GetNextLevelIndex()
+    {
+        return playerData.currentLevel + 1;
+    }
+
+    // После прохождения уровня вызываем этот метод
+    public void AdvanceToNextLevel()
+    {
+        playerData.currentLevel++;
+        SaveData();
+        SceneManager.LoadScene(playerData.currentLevel);
     }
 
     public int GetMoney() => playerData.money;
