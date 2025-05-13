@@ -81,7 +81,7 @@ public class ShopUI : MonoBehaviour
             else
             {
                 Debug.Log($"[ShopUI] Weapon slot {i} has no corresponding item, deactivating slot");
-                shopItemSlots[i].gameObject.SetActive(false);
+                shopItemSlots[i].slotroot.SetActive(false);
             }
         }
         Debug.Log("[ShopUI] SetupWeaponShop() end");
@@ -90,9 +90,9 @@ public class ShopUI : MonoBehaviour
     private void TryBuyWeapon(string weaponID, int cost, ShopItemSlot slot)
     {
         Debug.Log($"[ShopUI] TryBuyWeapon called for {weaponID} with cost {cost}");
-        LeanTween.scale(slot.gameObject, Vector3.one * 0.9f, 0.05f)
+        LeanTween.scale(slot.slotroot, Vector3.one * 0.9f, 0.05f)
             .setEase(LeanTweenType.easeOutQuad)
-            .setOnComplete(() => LeanTween.scale(slot.gameObject, Vector3.one, 0.05f).setEase(LeanTweenType.easeOutQuad));
+            .setOnComplete(() => LeanTween.scale(slot.slotroot, Vector3.one, 0.05f).setEase(LeanTweenType.easeOutQuad));
 
         if (PlayerDataManager.Instance.SpendMoney(cost))
         {
@@ -149,7 +149,7 @@ public class ShopUI : MonoBehaviour
             else
             {
                 Debug.Log($"[ShopUI] Skill slot {i} has no corresponding item, deactivating slot");
-                skillItemSlots[i].gameObject.SetActive(false);
+                skillItemSlots[i].slotroot.SetActive(false);
             }
         }
         Debug.Log("[ShopUI] SetupSkillShop() end");
@@ -158,9 +158,9 @@ public class ShopUI : MonoBehaviour
     private void TryBuySkill(string skillID, int cost, ShopItemSlot slot)
     {
         Debug.Log($"[ShopUI] TryBuySkill called for {skillID} with cost {cost}");
-        LeanTween.scale(slot.gameObject, Vector3.one * 0.9f, 0.05f)
+        LeanTween.scale(slot.slotroot, Vector3.one * 0.9f, 0.05f)
             .setEase(LeanTweenType.easeOutQuad)
-            .setOnComplete(() => LeanTween.scale(slot.gameObject, Vector3.one, 0.05f).setEase(LeanTweenType.easeOutQuad));
+            .setOnComplete(() => LeanTween.scale(slot.slotroot, Vector3.one, 0.05f).setEase(LeanTweenType.easeOutQuad));
 
         if (PlayerDataManager.Instance.SpendMoney(cost))
         {
@@ -187,7 +187,7 @@ public class ShopUI : MonoBehaviour
 [System.Serializable]
 public class ShopItemSlot
 {
-    public GameObject gameObject;
+    public GameObject slotroot;
     public Button button;
     public Image icon;
     public TextMeshProUGUI costText;
@@ -203,7 +203,7 @@ public class ShopItemSlot
         }
         else
         {
-            gameObject.SetActive(true);
+            slotroot.SetActive(true);
             button.interactable = true;
             costText.text = cost.ToString();
             weaponNameText.text = itemID;

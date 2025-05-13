@@ -1592,7 +1592,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1739162685
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1811,8 +1811,56 @@ PrefabInstance:
       value: Panels
       objectReference: {fileID: 0}
     - target: {fileID: 8558561839848774811, guid: 95f1e56f75ec89d429faaa038acf44c9, type: 3}
+      propertyPath: skillItems.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8558561839848774811, guid: 95f1e56f75ec89d429faaa038acf44c9, type: 3}
       propertyPath: skillItemSlots.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8558561839848774811, guid: 95f1e56f75ec89d429faaa038acf44c9, type: 3}
+      propertyPath: skillItems.Array.data[0].cost
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8558561839848774811, guid: 95f1e56f75ec89d429faaa038acf44c9, type: 3}
+      propertyPath: skillItems.Array.data[0].icon
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8558561839848774811, guid: 95f1e56f75ec89d429faaa038acf44c9, type: 3}
+      propertyPath: skillItems.Array.data[0].skillID
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8558561839848774811, guid: 95f1e56f75ec89d429faaa038acf44c9, type: 3}
+      propertyPath: skillItemSlots.Array.data[0].icon
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8558561839848774811, guid: 95f1e56f75ec89d429faaa038acf44c9, type: 3}
+      propertyPath: skillItemSlots.Array.data[0].button
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8558561839848774811, guid: 95f1e56f75ec89d429faaa038acf44c9, type: 3}
+      propertyPath: shopItemSlots.Array.data[0].slotroot
+      value: 
+      objectReference: {fileID: 6396550116675850270}
+    - target: {fileID: 8558561839848774811, guid: 95f1e56f75ec89d429faaa038acf44c9, type: 3}
+      propertyPath: shopItemSlots.Array.data[1].slotroot
+      value: 
+      objectReference: {fileID: 6396550116675850269}
+    - target: {fileID: 8558561839848774811, guid: 95f1e56f75ec89d429faaa038acf44c9, type: 3}
+      propertyPath: shopItemSlots.Array.data[2].slotroot
+      value: 
+      objectReference: {fileID: 6396550116675850268}
+    - target: {fileID: 8558561839848774811, guid: 95f1e56f75ec89d429faaa038acf44c9, type: 3}
+      propertyPath: skillItemSlots.Array.data[0].costText
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8558561839848774811, guid: 95f1e56f75ec89d429faaa038acf44c9, type: 3}
+      propertyPath: skillItemSlots.Array.data[0].slotroot
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8558561839848774811, guid: 95f1e56f75ec89d429faaa038acf44c9, type: 3}
+      propertyPath: skillItemSlots.Array.data[0].weaponNameText
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -1820,6 +1868,21 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 95f1e56f75ec89d429faaa038acf44c9, type: 3}
+--- !u!1 &6396550116675850268 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 643211820889924029, guid: 95f1e56f75ec89d429faaa038acf44c9, type: 3}
+  m_PrefabInstance: {fileID: 6396550116675850266}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6396550116675850269 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3093329962488458471, guid: 95f1e56f75ec89d429faaa038acf44c9, type: 3}
+  m_PrefabInstance: {fileID: 6396550116675850266}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6396550116675850270 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6917993257850846105, guid: 95f1e56f75ec89d429faaa038acf44c9, type: 3}
+  m_PrefabInstance: {fileID: 6396550116675850266}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
