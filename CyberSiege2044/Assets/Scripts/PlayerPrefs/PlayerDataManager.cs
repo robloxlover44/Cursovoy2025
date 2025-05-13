@@ -224,6 +224,17 @@ public class PlayerDataManager : MonoBehaviour
         SaveData();
         OnHealthChanged?.Invoke();
     }
+    /// Разблокировать пассивный навык и сразу сохранить прогресс.
+    public void UnlockSkill(string skillID)
+    {
+        playerData.UnlockSkill(skillID);
+        SaveData();
+    }
+    /// Проверить, разблокирован ли у игрока данный навык.
+    public bool IsSkillUnlocked(string skillID)
+    {
+        return playerData.HasSkill(skillID);
+    }
 }
 
 // Расширение модели под здоровье чекпоинта

@@ -12,13 +12,17 @@ public class PlayerDataModel
     public int currentWeaponIndex;
     public int portalEntryCount; // Счётчик заходов в портал
 
+    // Новое поле для пассивных навыков
+    public List<string> unlockedSkills = new List<string>();
+
     public PlayerDataModel()
     {
         money = 60;
         shards = 0;
-        maxHealth = 100; // Начальное значение максимального здоровья
-        currentWeaponIndex = -1; // -1 означает, что оружие не выбрано
-        portalEntryCount = 0; // Начинаем с 0
+        maxHealth = 100;
+        currentWeaponIndex = -1;
+        portalEntryCount = 0;
+        unlockedSkills = new List<string>();
     }
 
     // Методы для работы с валютами
@@ -45,9 +49,20 @@ public class PlayerDataModel
         return false;
     }
 
+    // Методы для пассивных навыков
+    public void UnlockSkill(string skillID)
+    {
+        if (!unlockedSkills.Contains(skillID))
+            unlockedSkills.Add(skillID);
+    }
+
+    public bool HasSkill(string skillID)
+    {
+        return unlockedSkills.Contains(skillID);
+    }
+
     public PlayerDataModel Clone()
     {
-        // Глубокая копия через сериализацию в JSON и обратно
         string json = JsonUtility.ToJson(this);
         return JsonUtility.FromJson<PlayerDataModel>(json);
     }
