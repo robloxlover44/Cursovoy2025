@@ -65,6 +65,9 @@ public class ShopUI : MonoBehaviour
                 slot.button.interactable = !isOwned;
                 Debug.Log($"[ShopUI] Weapon slot.button.interactable set to {!isOwned}");
 
+                Debug.Log("[ShopUI] Preserving original scale before animation");
+                Vector3 origScaleW = slot.slotRoot.transform.localScale;
+
                 Debug.Log("[ShopUI] Weapon slot.button.RemoveAllListeners()");
                 slot.button.onClick.RemoveAllListeners();
                 if (!isOwned)
@@ -74,6 +77,10 @@ public class ShopUI : MonoBehaviour
                     slot.button.onClick.AddListener(() =>
                     {
                         Debug.Log($"[ShopUI] Weapon buy clicked: {shopItems[index].itemID}");
+                        // Smooth click animation with original scale
+                        LeanTween.scale(slot.slotRoot, origScaleW * 0.9f, 0.05f)
+                            .setEase(LeanTweenType.easeOutQuad)
+                            .setOnComplete(() => LeanTween.scale(slot.slotRoot, origScaleW, 0.05f).setEase(LeanTweenType.easeOutQuad));
                         TryBuyWeapon(shopItems[index].itemID, shopItems[index].cost, shopItemSlots[index]);
                     });
                 }
@@ -81,7 +88,7 @@ public class ShopUI : MonoBehaviour
             else
             {
                 Debug.Log($"[ShopUI] Weapon slot {i} has no corresponding item, deactivating slot");
-                shopItemSlots[i].slotroot.SetActive(false);
+                shopItemSlots[i].slotRoot.SetActive(false);
             }
         }
         Debug.Log("[ShopUI] SetupWeaponShop() end");
@@ -90,10 +97,6 @@ public class ShopUI : MonoBehaviour
     private void TryBuyWeapon(string weaponID, int cost, ShopItemSlot slot)
     {
         Debug.Log($"[ShopUI] TryBuyWeapon called for {weaponID} with cost {cost}");
-        LeanTween.scale(slot.slotroot, Vector3.one * 0.9f, 0.05f)
-            .setEase(LeanTweenType.easeOutQuad)
-            .setOnComplete(() => LeanTween.scale(slot.slotroot, Vector3.one, 0.05f).setEase(LeanTweenType.easeOutQuad));
-
         if (PlayerDataManager.Instance.SpendMoney(cost))
         {
             if (!PlayerDataManager.Instance.GetInventoryWeapons().Contains(weaponID))
@@ -133,6 +136,9 @@ public class ShopUI : MonoBehaviour
                 slot.button.interactable = !isUnlocked;
                 Debug.Log($"[ShopUI] Skill slot.button.interactable set to {!isUnlocked}");
 
+                Debug.Log("[ShopUI] Preserving original scale before animation");
+                Vector3 origScaleS = slot.slotRoot.transform.localScale;
+
                 Debug.Log("[ShopUI] Skill slot.button.RemoveAllListeners()");
                 slot.button.onClick.RemoveAllListeners();
                 if (!isUnlocked)
@@ -142,6 +148,10 @@ public class ShopUI : MonoBehaviour
                     slot.button.onClick.AddListener(() =>
                     {
                         Debug.Log($"[ShopUI] Skill buy clicked: {skillItems[index].skillID}");
+                        // Smooth click animation with original scale
+                        LeanTween.scale(slot.slotRoot, origScaleS * 0.9f, 0.05f)
+                            .setEase(LeanTweenType.easeOutQuad)
+                            .setOnComplete(() => LeanTween.scale(slot.slotRoot, origScaleS, 0.05f).setEase(LeanTweenType.easeOutQuad));
                         TryBuySkill(skillItems[index].skillID, skillItems[index].cost, skillItemSlots[index]);
                     });
                 }
@@ -149,7 +159,7 @@ public class ShopUI : MonoBehaviour
             else
             {
                 Debug.Log($"[ShopUI] Skill slot {i} has no corresponding item, deactivating slot");
-                skillItemSlots[i].slotroot.SetActive(false);
+                skillItemSlots[i].slotRoot.SetActive(false);
             }
         }
         Debug.Log("[ShopUI] SetupSkillShop() end");
@@ -158,10 +168,6 @@ public class ShopUI : MonoBehaviour
     private void TryBuySkill(string skillID, int cost, ShopItemSlot slot)
     {
         Debug.Log($"[ShopUI] TryBuySkill called for {skillID} with cost {cost}");
-        LeanTween.scale(slot.slotroot, Vector3.one * 0.9f, 0.05f)
-            .setEase(LeanTweenType.easeOutQuad)
-            .setOnComplete(() => LeanTween.scale(slot.slotroot, Vector3.one, 0.05f).setEase(LeanTweenType.easeOutQuad));
-
         if (PlayerDataManager.Instance.SpendMoney(cost))
         {
             if (!PlayerDataManager.Instance.IsSkillUnlocked(skillID))
@@ -187,7 +193,7 @@ public class ShopUI : MonoBehaviour
 [System.Serializable]
 public class ShopItemSlot
 {
-    public GameObject slotroot;
+    public GameObject slotRoot;
     public Button button;
     public Image icon;
     public TextMeshProUGUI costText;
@@ -203,7 +209,7 @@ public class ShopItemSlot
         }
         else
         {
-            slotroot.SetActive(true);
+            slotRoot.SetActive(true);
             button.interactable = true;
             costText.text = cost.ToString();
             weaponNameText.text = itemID;

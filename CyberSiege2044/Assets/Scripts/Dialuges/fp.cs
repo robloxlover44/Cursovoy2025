@@ -6,6 +6,8 @@ using static LeanTween;
 public class DialogueSystemFP : MonoBehaviour
 {
     [Header("��������� �������")]
+    [SerializeField] private GameObject shit;           
+
     [SerializeField] private GameObject bg;           
 
     [SerializeField] private GameObject dialogBox1;           // ������ ���������� ����
@@ -178,6 +180,8 @@ public class DialogueSystemFP : MonoBehaviour
         LeanTween.alphaCanvas(dialogCanvasGroup2, 0f, 0.5f)
             .setIgnoreTimeScale(true);
         bg.SetActive(false);
+        shit.SetActive(false);
+
     }
 }
 
