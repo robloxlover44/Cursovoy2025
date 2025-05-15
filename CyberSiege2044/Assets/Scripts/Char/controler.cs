@@ -149,19 +149,29 @@ public class PlayerController : MonoBehaviour
     }
 
     public void TakeDamage(int damage)
+{
+    if (isDead) return; // (строка 83)
+
+    // 1) Если щит активен — ломаем его и НЕ даём урон игроку
+    var shield = GetComponentInChildren<ShieldController>();
+    if (shield != null && shield.IsShieldActive)
     {
-        if (isDead) return; // Не обрабатываем урон, если уже мёртв
-
-        if (PlayerDataManager.Instance.SpendHealth(damage))
-        {
-            Debug.Log($"Игрок получил {damage} урона. Текущее здоровье: {PlayerDataManager.Instance.GetHealth()}");
-        }
-
-        if (PlayerDataManager.Instance.GetHealth() <= 0)
-        {
-            StartCoroutine(PlayDeathAnimation());
-        }
+        shield.BreakShield(); // ломаем щит вместо урона
+        return;
     }
+
+    // 2) Обычный урон
+    if (PlayerDataManager.Instance.SpendHealth(damage))
+    {
+        Debug.Log($"Игрок получил {damage} урона. Текущее здоровье: {PlayerDataManager.Instance.GetHealth()}");
+    }
+
+    if (PlayerDataManager.Instance.GetHealth() <= 0)
+    {
+        StartCoroutine(PlayDeathAnimation());
+    }
+}
+
     
     IEnumerator PlayDeathAnimation()
     {
