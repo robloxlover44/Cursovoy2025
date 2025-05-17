@@ -16597,6 +16597,10 @@ PrefabInstance:
       propertyPath: shieldController
       value: 
       objectReference: {fileID: 4987309277568430369}
+    - target: {fileID: 2008084667770832682, guid: 9f29269e98b40a84ea62a6d88c09e576, type: 3}
+      propertyPath: dashController
+      value: 
+      objectReference: {fileID: 4987309277568430370}
     - target: {fileID: 4643656857365340006, guid: 9f29269e98b40a84ea62a6d88c09e576, type: 3}
       propertyPath: m_Camera
       value: 
@@ -17317,6 +17321,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b056f271028a3ec43b23a5cca99ea57f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4987309277568430370 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2277278126503389070, guid: effba216fc02bfb41a07824e7d09aefa, type: 3}
+  m_PrefabInstance: {fileID: 4987309277568430368}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4983b28e3d2a444cba3c6c10bd9f792, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &8772689899116691624

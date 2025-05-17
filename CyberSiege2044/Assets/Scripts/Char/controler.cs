@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Linq;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
@@ -16,11 +17,15 @@ public class PlayerController : MonoBehaviour
     public Vector3 cameraOffset;
 
     private Vector2 movement;
+    private Vector2 lastDirection = Vector2.right;
+    public Vector2 LastMovementDirection => lastDirection;
     private Rigidbody2D rb;
+    private DashController dashController;
     private Camera mainCamera;
     private float animationTimer;
     private int currentFrame;
     private bool isMoving;
+    
 
     public List<GameObject> inventoryWeaponObjects = new List<GameObject>();
     public GameObject currentWeaponObject;
@@ -43,6 +48,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        dashController = GetComponentInChildren<DashController>();
         mainCamera = Camera.main;
 
         if (cameraTransform != null && cameraOffset == Vector3.zero)
@@ -94,6 +100,8 @@ public class PlayerController : MonoBehaviour
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
         isMoving = movement.sqrMagnitude > 0;
+        if (movement.sqrMagnitude > 0f)
+        lastDirection = movement.normalized;
 
         Animate();
         RotateToMouse();
@@ -132,9 +140,14 @@ public class PlayerController : MonoBehaviour
     }
 
     void FixedUpdate()
-    {
-        rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
-    }
+{
+    // Если рывок в процессе — отключаем обычное движение
+    if (dashController != null && dashController.IsDashing)
+        return;
+
+    rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+}
+
 
     void Animate()
     {

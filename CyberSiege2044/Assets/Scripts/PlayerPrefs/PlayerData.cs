@@ -17,7 +17,7 @@ public class PlayerDataModel
 
     public PlayerDataModel()
     {
-        money = 110;
+        money = 1000;
         shards = 0;
         maxHealth = 100;
         currentWeaponIndex = -1;
