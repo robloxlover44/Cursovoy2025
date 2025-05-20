@@ -4,7 +4,7 @@ using static LeanTween; // убедись, что плагин подключё�
 
 public class ChaseEnemy : MonoBehaviour
 {
-    public enum EnemyState { Idle, Chasing, Exploding }
+    public enum EnemyState { Patrol, Chasing, Exploding }
 
     [Header("Trigger Settings")]
     public Collider2D triggerZone;
@@ -12,6 +12,11 @@ public class ChaseEnemy : MonoBehaviour
     [Header("Movement Settings")]
     public float chaseSpeed = 4f;
     public float stoppingDistance = 0.1f;
+
+    [Header("Patrol Settings")]
+    public Transform[] patrolPoints;      // назначаем точки в инспекторе
+    public float patrolSpeed = 2f;        // скорость ходьбы при патруле
+    public float patrolFrameRate = 0.3f;  // скорость анимации при патруле
 
     [Header("Damage Settings")]
     public int damage = 10;
@@ -23,13 +28,9 @@ public class ChaseEnemy : MonoBehaviour
     public float frameRate = 0.15f;
 
     [Header("Loot Drop Settings")]
-    [Tooltip("Префаб осколков")]
     public GameObject shardLootPrefab;
-    [Tooltip("Префаб денег")]
     public GameObject moneyLootPrefab;
-    [Tooltip("Диапазон суммы денег [min, max]")]
     public Vector2 moneyRange = new Vector2(5, 20);
-    [Tooltip("Шанс выпадения осколков")]
     public float shardDropChance = 0.5f;
 
     [Header("Drop Animation Settings")]
@@ -39,11 +40,17 @@ public class ChaseEnemy : MonoBehaviour
     public LeanTweenType fallEase = LeanTweenType.easeInQuad;
     public LeanTweenType bounceEase = LeanTweenType.easeOutBounce;
 
+    // внутренние поля
     private Transform player;
     private SpriteRenderer spriteRenderer;
-    private EnemyState currentState = EnemyState.Idle;
+    private EnemyState currentState = EnemyState.Patrol;
     private Coroutine animationCoroutine;
     private int currentHealth;
+    private int currentPatrolIndex = 0;
+    private float currentFrameRate;
+
+    // закэшированные мировые позиции патрульных точек
+    private Vector3[] patrolPositions;
 
     void Start()
     {
@@ -52,35 +59,87 @@ public class ChaseEnemy : MonoBehaviour
 
         if (triggerZone == null)
             triggerZone = GetComponent<Collider2D>();
-
         triggerZone.isTrigger = true;
+
         currentHealth = maxHealth;
+        currentFrameRate = frameRate;
+
+        // кешируем глобальные позиции точек
+        if (patrolPoints != null && patrolPoints.Length > 0)
+        {
+            patrolPositions = new Vector3[patrolPoints.Length];
+            for (int i = 0; i < patrolPoints.Length; i++)
+                patrolPositions[i] = patrolPoints[i].position;
+        }
+
+        EnterPatrol();
     }
 
     void Update()
     {
-        if (currentState == EnemyState.Chasing && player != null)
-            ChasePlayer();
+        switch (currentState)
+        {
+            case EnemyState.Patrol:
+                Patrol();
+                break;
+            case EnemyState.Chasing:
+                ChasePlayer();
+                break;
+        }
     }
 
-    void ChasePlayer()
+    private void Patrol()
     {
-        if (Vector2.Distance(transform.position, player.position) > stoppingDistance)
+        if (patrolPositions == null || patrolPositions.Length == 0)
+            return;
+
+        Vector2 currentPos = transform.position;
+        Vector2 targetPos  = patrolPositions[currentPatrolIndex];
+        float   dist       = Vector2.Distance(currentPos, targetPos);
+
+        const float arrivalThreshold = 0.2f;
+        if (dist > arrivalThreshold)
         {
-            Vector2 direction = (player.position - transform.position).normalized;
-            transform.position += (Vector3)direction * chaseSpeed * Time.deltaTime;
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(0, 0, angle);
+            Vector2 dir = (targetPos - currentPos).normalized;
+            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+            transform.localEulerAngles = new Vector3(0f, 0f, angle);
+
+            transform.position = Vector2.MoveTowards(
+                currentPos,
+                targetPos,
+                patrolSpeed * Time.deltaTime
+            );
+        }
+        else
+        {
+            currentPatrolIndex = (currentPatrolIndex + 1) % patrolPositions.Length;
+        }
+    }
+
+    private void ChasePlayer()
+    {
+        if (player == null) return;
+
+        float dist = Vector2.Distance(transform.position, player.position);
+        if (dist > stoppingDistance)
+        {
+            Vector2 dir = (player.position - transform.position).normalized;
+            transform.position += (Vector3)dir * chaseSpeed * Time.deltaTime;
+            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(0f, 0f, angle);
         }
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player") && currentState == EnemyState.Idle)
-        {
-            currentState = EnemyState.Chasing;
-            StartAnimation(runAnimation);
-        }
+        if (other.CompareTag("Player") && currentState == EnemyState.Patrol)
+            EnterChase();
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Player") && currentState == EnemyState.Chasing)
+            EnterPatrol();
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -92,21 +151,36 @@ public class ChaseEnemy : MonoBehaviour
         }
     }
 
+    public void TakeDamage(int dmg)
+    {
+        if (currentState == EnemyState.Exploding) return;
+        currentHealth -= dmg;
+        if (currentHealth <= 0) Die();
+    }
+
+    private void Die()
+    {
+        currentState = EnemyState.Exploding;
+        StopAllCoroutines();
+        StartCoroutine(PlayExplosion());
+    }
+
     IEnumerator AnimateSprite(Sprite[] frames)
     {
-        int index = 0;
+        int idx = 0;
         while (true)
         {
-            spriteRenderer.sprite = frames[index];
-            index = (index + 1) % frames.Length;
-            yield return new WaitForSeconds(frameRate);
+            spriteRenderer.sprite = frames[idx];
+            idx = (idx + 1) % frames.Length;
+            yield return new WaitForSeconds(currentFrameRate);
         }
     }
 
     IEnumerator PlayExplosion()
     {
         GetComponent<Collider2D>().enabled = false;
-        chaseSpeed = 0;
+        if (animationCoroutine != null)
+            StopCoroutine(animationCoroutine);
 
         foreach (Sprite frame in explodeAnimation)
         {
@@ -118,28 +192,11 @@ public class ChaseEnemy : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void TakeDamage(int damage)
-    {
-        if (currentState == EnemyState.Exploding) return;
-        currentHealth -= damage;
-        if (currentHealth <= 0)
-            Die();
-    }
-
-    private void Die()
-    {
-        currentState = EnemyState.Exploding;
-        StopAllCoroutines();
-        StartCoroutine(PlayExplosion());
-    }
-
     private void SpawnLoot()
     {
-        // Осколки с шансом
         if (shardLootPrefab != null && Random.value <= shardDropChance)
             AnimateLoot(shardLootPrefab, 1, false);
 
-        // Деньги всегда (или можно добавить шанс)
         if (moneyLootPrefab != null)
         {
             int amount = Random.Range((int)moneyRange.x, (int)moneyRange.y + 1);
@@ -147,54 +204,51 @@ public class ChaseEnemy : MonoBehaviour
         }
     }
 
-    // Анимирует выпадение одного префаба
     private void AnimateLoot(GameObject prefab, int value, bool isMoney)
-{
-    Vector3 origin = transform.position;
-    GameObject loot = Instantiate(prefab, origin, Quaternion.identity);
-
-    // Запоминаем оригинальный scale из префаба
-    Vector3 originalScale = loot.transform.localScale;
-    // Сразу ставим 0, чтобы эффект «выпрыгивания»
-    loot.transform.localScale = Vector3.zero;
-
-    if (isMoney)
     {
-        var mp = loot.GetComponent<MoneyPickup>();
-        if (mp != null) mp.SetAmount(value);
+        Vector3 origin = transform.position;
+        GameObject loot = Instantiate(prefab, origin, Quaternion.identity);
+
+        Vector3 origScale = loot.transform.localScale;
+        loot.transform.localScale = Vector3.zero;
+        if (isMoney)
+        {
+            var mp = loot.GetComponent<MoneyPickup>();
+            if (mp != null) mp.SetAmount(value);
+        }
+
+        Vector2 offset = Random.insideUnitCircle.normalized * dropRadius;
+        Vector3 targetPos = origin + (Vector3)offset;
+
+        LeanTween.scale(loot, origScale, fallDuration * 0.5f).setEase(fallEase);
+        LTSeq seq = LeanTween.sequence();
+        seq.append(() => LeanTween.move(loot, targetPos, fallDuration).setEase(fallEase));
+        seq.append(() => LeanTween.moveY(loot, targetPos.y + bounceHeight, fallDuration * 0.5f).setEase(bounceEase));
+        seq.append(() => LeanTween.moveY(loot, targetPos.y, fallDuration * 0.5f).setEase(LeanTweenType.easeInQuad));
     }
 
-    // Целевая точка в радиусе
-    Vector2 offset = Random.insideUnitCircle.normalized * dropRadius;
-    Vector3 targetPos = origin + (Vector3)offset;
-
-    // Появление: масштабируем до оригинала
-    LeanTween.scale(loot, originalScale, fallDuration * 0.5f)
-             .setEase(LeanTweenType.easeOutBack);
-
-    // Падение и отскок
-    LTSeq seq = LeanTween.sequence();
-    seq.append(() =>
-    {
-        LeanTween.move(loot, targetPos, fallDuration).setEase(fallEase);
-    });
-    seq.append(() =>
-    {
-        LeanTween.moveY(loot, targetPos.y + bounceHeight, fallDuration * 0.5f).setEase(bounceEase);
-    });
-    seq.append(() =>
-    {
-        LeanTween.moveY(loot, targetPos.y, fallDuration * 0.5f).setEase(LeanTweenType.easeInQuad);
-    });
-
-    // Убираем бесконечное вращение (оно просто не создаётся)
-}
-
-
-    private void StartAnimation(Sprite[] frames)
+    private void StartAnimation(Sprite[] frames, float rate)
     {
         if (animationCoroutine != null)
             StopCoroutine(animationCoroutine);
+        currentFrameRate = rate;
         animationCoroutine = StartCoroutine(AnimateSprite(frames));
+    }
+
+    private void StartAnimation(Sprite[] frames)
+    {
+        StartAnimation(frames, frameRate);
+    }
+
+    private void EnterPatrol()
+    {
+        currentState = EnemyState.Patrol;
+        StartAnimation(runAnimation, patrolFrameRate);
+    }
+
+    private void EnterChase()
+    {
+        currentState = EnemyState.Chasing;
+        StartAnimation(runAnimation, frameRate);
     }
 }

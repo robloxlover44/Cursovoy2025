@@ -24,8 +24,8 @@ TagManager:
   - ebullet
   - enemy
   - env
-  - 
-  - 
+  - Map
+  - tile_env
   - 
   - 
   - 
@@ -45,5 +45,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: EnemiesIgnore
+    uniqueID: 1346867243
+    locked: 0
   m_RenderingLayers:
   - Default
+  - EnemiesIgnore
