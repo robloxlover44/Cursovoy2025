@@ -81,8 +81,9 @@ public class DialogueSystem : MonoBehaviour
         isPaused = true;
         Time.timeScale = 0f;
         currentLine = 0;
-        
+
         // Активируем оба окна и очищаем их текст при старте диалога
+        shit.SetActive(true);
         dialogBox1.SetActive(true);
         dialogBox2.SetActive(true);
         bg.SetActive(true);

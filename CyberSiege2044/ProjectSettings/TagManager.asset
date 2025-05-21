@@ -8,6 +8,8 @@ TagManager:
   - Obstacle
   - Enemy
   - e-bullet
+  - RED
+  - GREEN
   layers:
   - Default
   - TransparentFX

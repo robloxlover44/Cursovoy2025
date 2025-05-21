@@ -52,10 +52,14 @@ public class ChaseEnemy : MonoBehaviour
     // закэшированные мировые позиции патрульных точек
     private Vector3[] patrolPositions;
 
+    // ДОБАВИЛ ДЛЯ ФИЗИКИ:
+    private Rigidbody2D rb;
+
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        rb = GetComponent<Rigidbody2D>(); // <-- важно!
 
         if (triggerZone == null)
             triggerZone = GetComponent<Collider2D>();
@@ -75,7 +79,7 @@ public class ChaseEnemy : MonoBehaviour
         EnterPatrol();
     }
 
-    void Update()
+    void FixedUpdate()
     {
         switch (currentState)
         {
@@ -93,7 +97,7 @@ public class ChaseEnemy : MonoBehaviour
         if (patrolPositions == null || patrolPositions.Length == 0)
             return;
 
-        Vector2 currentPos = transform.position;
+        Vector2 currentPos = rb.position; // rb!
         Vector2 targetPos  = patrolPositions[currentPatrolIndex];
         float   dist       = Vector2.Distance(currentPos, targetPos);
 
@@ -104,11 +108,12 @@ public class ChaseEnemy : MonoBehaviour
             float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
             transform.localEulerAngles = new Vector3(0f, 0f, angle);
 
-            transform.position = Vector2.MoveTowards(
+            // ФИЗИЧЕСКОЕ ДВИЖЕНИЕ:
+            rb.MovePosition(Vector2.MoveTowards(
                 currentPos,
                 targetPos,
-                patrolSpeed * Time.deltaTime
-            );
+                patrolSpeed * Time.fixedDeltaTime
+            ));
         }
         else
         {
@@ -120,16 +125,22 @@ public class ChaseEnemy : MonoBehaviour
     {
         if (player == null) return;
 
-        float dist = Vector2.Distance(transform.position, player.position);
+        Vector2 currentPos = rb.position; // rb!
+        Vector2 targetPos = player.position;
+        float dist = Vector2.Distance(currentPos, targetPos);
+
         if (dist > stoppingDistance)
         {
-            Vector2 dir = (player.position - transform.position).normalized;
-            transform.position += (Vector3)dir * chaseSpeed * Time.deltaTime;
+            Vector2 dir = (targetPos - currentPos).normalized;
             float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0f, 0f, angle);
+
+            // ФИЗИЧЕСКОЕ ДВИЖЕНИЕ:
+            rb.MovePosition(currentPos + dir * chaseSpeed * Time.fixedDeltaTime);
         }
     }
 
+    // ... дальше весь твой код без изменений!
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player") && currentState == EnemyState.Patrol)

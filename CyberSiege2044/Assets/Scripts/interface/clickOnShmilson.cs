@@ -1,47 +1,53 @@
 using UnityEngine;
-using UnityEngine.UI; // ��� ������ � UI
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;  // для работы со сценами
+using System.Collections.Generic;
 
 public class ResourceButton : MonoBehaviour
 {
-    public enum ResourceType { Money, Shards }
-    public ResourceType resourceType;
-    public int amount = 1; // ���������� ��������
-    private bool hasBeenClicked = false; // ����, ����� ���������� ������ ���� ���
+    public string mainSceneName = "MainScene"; // Название твоей основной сцены
+    private bool hasBeenClicked = false;       // чтобы не срабатывать дважды
 
-    private void Start()
+    void Start()
     {
-        Button button = GetComponent<Button>();
-
-        if (button == null)
+        var btn = GetComponent<Button>();
+        if (btn == null)
         {
-            Debug.LogError("[ResourceButton] ������: ������ ����� �� �� ������!");
+            Debug.LogError("[ResourceButton] Нет Button компонента!");
             return;
         }
-
-        button.onClick.AddListener(GiveResource);
+        btn.onClick.AddListener(DisableRedObjects);
     }
 
-    private void GiveResource()
+    private void DisableRedObjects()
     {
-        if (hasBeenClicked) return; // ���� ��� �������� � �������
+        if (hasBeenClicked) return;
+        hasBeenClicked = true;
 
-        if (PlayerDataManager.Instance == null)
+        // пытаемся найти основную сцену по имени
+        Scene main = SceneManager.GetSceneByName(mainSceneName);
+        if (!main.IsValid() || !main.isLoaded)
         {
-            Debug.LogError("[ResourceButton] ������: PlayerDataManager.Instance == null!");
+            Debug.LogError($"[ResourceButton] Сцена \"{mainSceneName}\" не загружена или не найдена!");
             return;
         }
 
-        switch (resourceType)
+        // Проходим по корневым объектам в основной сцене
+        var roots = main.GetRootGameObjects();
+        var turnedOff = new List<GameObject>();
+        foreach (var root in roots)
         {
-            case ResourceType.Money:
-                PlayerDataManager.Instance.AddMoney(amount);
-                break;
-            case ResourceType.Shards:
-                PlayerDataManager.Instance.AddShards(amount);
-                break;
+            // ищем ВСЕ объекты с тегом RED в иерархии этого корня
+            foreach (Transform child in root.GetComponentsInChildren<Transform>(true))
+            {
+                if (child.CompareTag("RED"))
+                {
+                    child.gameObject.SetActive(false);
+                    turnedOff.Add(child.gameObject);
+                }
+            }
         }
 
-        Debug.Log($"[ResourceButton] {amount} {resourceType} ���������!");
-        hasBeenClicked = true; // ������ ������ ������
+        Debug.Log($"[ResourceButton] Отключено объектов RED: {turnedOff.Count}");
     }
 }
