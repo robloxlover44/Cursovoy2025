@@ -98,8 +98,13 @@ public class ShooterEnemy : MonoBehaviour
 
     private void Patrol()
     {
-        if (patrolPositions == null || patrolPositions.Length == 0)
-            return;
+        if (patrolPositions == null || patrolPositions.Length < 2)
+    {
+        // Не крутимся
+        transform.localEulerAngles = Vector3.zero;
+        return;
+    }
+
 
         Vector2 currentPos = transform.position;
         Vector2 targetPos = patrolPositions[currentPatrolIndex];

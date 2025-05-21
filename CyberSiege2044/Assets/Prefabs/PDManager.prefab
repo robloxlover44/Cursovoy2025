@@ -46,6 +46,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelSceneNames:
   - LEVEL1
+  - LEVEL2
+  - LEVEL3
   checkpointScenes:
   - tutorial
   - LEVEL1
+  - LEVEL2
+  - LEVEL3

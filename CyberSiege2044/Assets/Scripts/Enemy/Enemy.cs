@@ -94,8 +94,13 @@ public class ChaseEnemy : MonoBehaviour
 
     private void Patrol()
     {
-        if (patrolPositions == null || patrolPositions.Length == 0)
-            return;
+        if (patrolPositions == null || patrolPositions.Length < 2)
+    {
+        // Не крутимся
+        transform.localEulerAngles = Vector3.zero;
+        return;
+    }
+
 
         Vector2 currentPos = rb.position; // rb!
         Vector2 targetPos  = patrolPositions[currentPatrolIndex];

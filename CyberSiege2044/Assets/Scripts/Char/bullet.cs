@@ -20,7 +20,7 @@ public class Projectile : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Enemy") && other is EdgeCollider2D)
+        if (other.CompareTag("Enemy") && other is BoxCollider2D)
         {
             // Проверяем ChaseEnemy
             ChaseEnemy chaseEnemy = other.GetComponent<ChaseEnemy>();

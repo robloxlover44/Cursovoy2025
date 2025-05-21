@@ -18403,7 +18403,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 6.82
+  orthographic size: 5.7
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -19577,7 +19577,7 @@ MonoBehaviour:
     CustomLookAtTarget: 0
   Lens:
     FieldOfView: 60
-    OrthographicSize: 6.82
+    OrthographicSize: 5.7
     NearClipPlane: 0.3
     FarClipPlane: 1000
     Dutch: 0
@@ -25265,6 +25265,14 @@ PrefabInstance:
     - target: {fileID: 2094086866555203534, guid: 98a8efe4d773d074e8e758690410e679, type: 3}
       propertyPath: m_Name
       value: enemyShoot
+      objectReference: {fileID: 0}
+    - target: {fileID: 4908584946078964806, guid: 98a8efe4d773d074e8e758690410e679, type: 3}
+      propertyPath: m_BodyType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4908584946078964806, guid: 98a8efe4d773d074e8e758690410e679, type: 3}
+      propertyPath: m_GravityScale
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5801112859301354491, guid: 98a8efe4d773d074e8e758690410e679, type: 3}
       propertyPath: m_LocalPosition.x
@@ -31149,11 +31157,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2795939369423408179, guid: 8b2168f346a43c548a30f6c4f80c334b, type: 3}
       propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4908584946078964806, guid: 8b2168f346a43c548a30f6c4f80c334b, type: 3}
+      propertyPath: m_BodyType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4908584946078964806, guid: 8b2168f346a43c548a30f6c4f80c334b, type: 3}
+      propertyPath: m_GravityScale
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4908584946078964806, guid: 8b2168f346a43c548a30f6c4f80c334b, type: 3}
+      propertyPath: m_CollisionDetection
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4908584946078964806, guid: 8b2168f346a43c548a30f6c4f80c334b, type: 3}
       propertyPath: m_IncludeLayers.m_Bits
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4908584946078964806, guid: 8b2168f346a43c548a30f6c4f80c334b, type: 3}
+      propertyPath: m_UseFullKinematicContacts
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5801112859301354491, guid: 8b2168f346a43c548a30f6c4f80c334b, type: 3}
       propertyPath: m_LocalPosition.x
