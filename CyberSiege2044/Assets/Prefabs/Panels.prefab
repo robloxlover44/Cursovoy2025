@@ -114,7 +114,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.022000015, y: -0.0264}
+  m_AnchoredPosition: {x: -0.022000015, y: -0.209}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7564002561057934571
@@ -743,7 +743,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.022000015, y: -0.2085}
+  m_AnchoredPosition: {x: -0.022000015, y: 0.1552}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3246680429137990324
@@ -1518,8 +1518,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdae9a176d391b5489feb972db8405b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resourceType: 1
-  amount: 10
+  mainSceneName: bar
 --- !u!114 &594102732553797263
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2425,7 +2424,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.022000015, y: 0.1552}
+  m_AnchoredPosition: {x: -0.022000015, y: -0.0264}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6147929304732753889
@@ -3786,28 +3785,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shopItemSlots:
-  - slotRoot: {fileID: 6917993257850846105}
-    button: {fileID: 5435628127538463776}
-    icon: {fileID: 6319368727015475416}
-    costText: {fileID: 229016291501236032}
-    weaponNameText: {fileID: 1341454250073822927}
   - slotRoot: {fileID: 3093329962488458471}
     button: {fileID: 7220371647936375234}
     icon: {fileID: 3356463188753984239}
     costText: {fileID: 8168194744331584568}
     weaponNameText: {fileID: 5972468350070920306}
+  - slotRoot: {fileID: 6917993257850846105}
+    button: {fileID: 5435628127538463776}
+    icon: {fileID: 6319368727015475416}
+    costText: {fileID: 229016291501236032}
+    weaponNameText: {fileID: 1341454250073822927}
   - slotRoot: {fileID: 643211820889924029}
     button: {fileID: 3822840751860514998}
     icon: {fileID: 3614154954886224871}
     costText: {fileID: 4557043128460723916}
     weaponNameText: {fileID: 422189209606496994}
   shopItems:
-  - itemID: Shotgun
-    cost: 200
-    icon: {fileID: 2894344322067435035, guid: 4d8910ecea93b8d41b260265a7f51f65, type: 3}
   - itemID: Pistol
     cost: 50
     icon: {fileID: -3753825769889500098, guid: a8112d35695412a4e81d5ba2e0bfe5a3, type: 3}
+  - itemID: Shotgun
+    cost: 200
+    icon: {fileID: 2894344322067435035, guid: 4d8910ecea93b8d41b260265a7f51f65, type: 3}
   - itemID: Lazer
     cost: 500
     icon: {fileID: 21300000, guid: 2937de3dcfb2eb443b356746ea5f0650, type: 3}
@@ -4100,7 +4099,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.08, y: -0.173}
+  m_AnchoredPosition: {x: 0.07999998, y: -0.173}
   m_SizeDelta: {x: 102.14587, y: 51.22027}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8869218954137435904

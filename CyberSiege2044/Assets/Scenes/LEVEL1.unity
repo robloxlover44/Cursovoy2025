@@ -475,7 +475,7 @@ PrefabInstance:
       objectReference: {fileID: 601584491}
     - target: {fileID: 1753226803889468565, guid: 90fa0cfc2ef5d2d45b95ef66bea7efac, type: 3}
       propertyPath: requiredShards
-      value: 45
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 3272208218869316861, guid: 90fa0cfc2ef5d2d45b95ef66bea7efac, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2657,7 +2657,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5.7
+  orthographic size: 7
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -3403,7 +3403,7 @@ MonoBehaviour:
     CustomLookAtTarget: 0
   Lens:
     FieldOfView: 60
-    OrthographicSize: 5.7
+    OrthographicSize: 7
     NearClipPlane: 0.3
     FarClipPlane: 1000
     Dutch: 0

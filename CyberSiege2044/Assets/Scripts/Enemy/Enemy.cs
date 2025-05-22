@@ -5,6 +5,7 @@ using static LeanTween; // убедись, что плагин подключё�
 public class ChaseEnemy : MonoBehaviour
 {
     public enum EnemyState { Patrol, Chasing, Exploding }
+    private int patrolDirection = 1; // 1 — вперёд, -1 — назад
 
     [Header("Trigger Settings")]
     public Collider2D triggerZone;
@@ -93,38 +94,47 @@ public class ChaseEnemy : MonoBehaviour
     }
 
     private void Patrol()
+{
+    if (patrolPositions == null || patrolPositions.Length < 2)
     {
-        if (patrolPositions == null || patrolPositions.Length < 2)
-    {
-        // Не крутимся
         transform.localEulerAngles = Vector3.zero;
         return;
     }
 
+    Vector2 currentPos = rb.position;
+    Vector2 targetPos = patrolPositions[currentPatrolIndex];
+    float dist = Vector2.Distance(currentPos, targetPos);
 
-        Vector2 currentPos = rb.position; // rb!
-        Vector2 targetPos  = patrolPositions[currentPatrolIndex];
-        float   dist       = Vector2.Distance(currentPos, targetPos);
+    const float arrivalThreshold = 0.2f;
+    if (dist > arrivalThreshold)
+    {
+        Vector2 dir = (targetPos - currentPos).normalized;
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        transform.localEulerAngles = new Vector3(0f, 0f, angle);
 
-        const float arrivalThreshold = 0.2f;
-        if (dist > arrivalThreshold)
+        rb.MovePosition(Vector2.MoveTowards(
+            currentPos,
+            targetPos,
+            patrolSpeed * Time.fixedDeltaTime
+        ));
+    }
+    else
+    {
+        // ПИНГ-ПОНГ патруль!
+        currentPatrolIndex += patrolDirection;
+        if (currentPatrolIndex >= patrolPositions.Length)
         {
-            Vector2 dir = (targetPos - currentPos).normalized;
-            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-            transform.localEulerAngles = new Vector3(0f, 0f, angle);
-
-            // ФИЗИЧЕСКОЕ ДВИЖЕНИЕ:
-            rb.MovePosition(Vector2.MoveTowards(
-                currentPos,
-                targetPos,
-                patrolSpeed * Time.fixedDeltaTime
-            ));
+            currentPatrolIndex = patrolPositions.Length - 2;
+            patrolDirection = -1;
         }
-        else
+        else if (currentPatrolIndex < 0)
         {
-            currentPatrolIndex = (currentPatrolIndex + 1) % patrolPositions.Length;
+            currentPatrolIndex = 1;
+            patrolDirection = 1;
         }
     }
+}
+
 
     private void ChasePlayer()
     {
