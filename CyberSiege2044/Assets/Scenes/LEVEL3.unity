@@ -35248,6 +35248,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7277025796170805326, guid: 9f29269e98b40a84ea62a6d88c09e576, type: 3}
   m_PrefabInstance: {fileID: 1811910855}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1811910859 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1251436341129971908, guid: 9f29269e98b40a84ea62a6d88c09e576, type: 3}
+  m_PrefabInstance: {fileID: 1811910855}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1899654126
 GameObject:
   m_ObjectHideFlags: 0
@@ -35836,6 +35847,10 @@ PrefabInstance:
       propertyPath: gameOverPanel
       value: 
       objectReference: {fileID: 1585828272}
+    - target: {fileID: 651654316199371601, guid: effba216fc02bfb41a07824e7d09aefa, type: 3}
+      propertyPath: reloadHintText
+      value: 
+      objectReference: {fileID: 1811910859}
     - target: {fileID: 651654316199371601, guid: effba216fc02bfb41a07824e7d09aefa, type: 3}
       propertyPath: cameraTransform
       value: 

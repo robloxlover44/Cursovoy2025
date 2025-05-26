@@ -25,7 +25,6 @@ public class PlayerController : MonoBehaviour
     private float animationTimer;
     private int currentFrame;
     private bool isMoving;
-    
 
     public List<GameObject> inventoryWeaponObjects = new List<GameObject>();
     public GameObject currentWeaponObject;
@@ -44,6 +43,9 @@ public class PlayerController : MonoBehaviour
 
     [Header("UI Settings")]
     public TMP_Text ammoText;
+    public TMP_Text reloadHintText; // <-- Новый TMP_Text по центру для "R to Reload!"
+
+    private bool isDead = false; // Флаг смерти
 
     void Start()
     {
@@ -92,8 +94,18 @@ public class PlayerController : MonoBehaviour
         }
 
         UpdateAmmoUI();
+
+        if (reloadHintText != null)
+            reloadHintText.gameObject.SetActive(false);
     }
-    private bool isDead = false; // Флаг смерти
+
+    void OnEnable()
+    {
+        UpdateAmmoUI();
+        if (reloadHintText != null)
+            reloadHintText.gameObject.SetActive(false);
+    }
+
     void Update()
     {
         if (isDead) return;
@@ -101,14 +113,21 @@ public class PlayerController : MonoBehaviour
         movement.y = Input.GetAxisRaw("Vertical");
         isMoving = movement.sqrMagnitude > 0;
         if (movement.sqrMagnitude > 0f)
-        lastDirection = movement.normalized;
+            lastDirection = movement.normalized;
 
         Animate();
         RotateToMouse();
         UpdateCameraPosition();
 
+        // --- ОБНОВЛЁННАЯ стрельба ---
         if (Input.GetMouseButtonDown(0) && currentWeapon != null)
         {
+            if (currentWeapon.GetCurrentAmmo() == 0 && !currentWeapon.IsReloading())
+            {
+                StartCoroutine(ShowReloadHint());
+                return;
+            }
+
             currentWeapon.Fire(transform.right);
             UpdateAmmoUI();
             if (currentWeapon.GetCurrentAmmo() <= 0)
@@ -117,11 +136,15 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        // --- ОБНОВЛЁННАЯ перезарядка ---
         if (Input.GetKeyDown(KeyCode.R) && currentWeapon != null)
         {
             currentWeapon.Reload();
             UpdateAmmoUI();
             StartCoroutine(WaitForReload());
+
+            if (reloadHintText != null)
+                reloadHintText.gameObject.SetActive(false);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha1) && inventoryWeaponObjects.Count >= 1)
@@ -136,18 +159,15 @@ public class PlayerController : MonoBehaviour
         {
             SwitchWeapon(2);
         }
-
     }
 
     void FixedUpdate()
-{
-    // Если рывок в процессе — отключаем обычное движение
-    if (dashController != null && dashController.IsDashing)
-        return;
+    {
+        if (dashController != null && dashController.IsDashing)
+            return;
 
-    rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
-}
-
+        rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+    }
 
     void Animate()
     {
@@ -162,33 +182,30 @@ public class PlayerController : MonoBehaviour
     }
 
     public void TakeDamage(int damage)
-{
-    if (isDead) return; // (строка 83)
-
-    // 1) Если щит активен — ломаем его и НЕ даём урон игроку
-    var shield = GetComponentInChildren<ShieldController>();
-    if (shield != null && shield.IsShieldActive)
     {
-        shield.BreakShield(); // ломаем щит вместо урона
-        return;
+        if (isDead) return;
+
+        var shield = GetComponentInChildren<ShieldController>();
+        if (shield != null && shield.IsShieldActive)
+        {
+            shield.BreakShield();
+            return;
+        }
+
+        if (PlayerDataManager.Instance.SpendHealth(damage))
+        {
+            Debug.Log($"Игрок получил {damage} урона. Текущее здоровье: {PlayerDataManager.Instance.GetHealth()}");
+        }
+
+        if (PlayerDataManager.Instance.GetHealth() <= 0)
+        {
+            StartCoroutine(PlayDeathAnimation());
+        }
     }
 
-    // 2) Обычный урон
-    if (PlayerDataManager.Instance.SpendHealth(damage))
-    {
-        Debug.Log($"Игрок получил {damage} урона. Текущее здоровье: {PlayerDataManager.Instance.GetHealth()}");
-    }
-
-    if (PlayerDataManager.Instance.GetHealth() <= 0)
-    {
-        StartCoroutine(PlayDeathAnimation());
-    }
-}
-
-    
     IEnumerator PlayDeathAnimation()
     {
-        isDead = true; // Устанавливаем флаг смерти
+        isDead = true;
         rb.linearVelocity = Vector2.zero;
         rb.isKinematic = true;
         GetComponent<Collider2D>().enabled = false;
@@ -200,8 +217,7 @@ public class PlayerController : MonoBehaviour
         }
 
         ShowGameOverPanel();
-        gameObject.SetActive(false); // Деактивируем игрока после анимации
-        // Или можно использовать Destroy(gameObject), если игрок не нужен до перезапуска сцены
+        gameObject.SetActive(false);
     }
 
     void ShowGameOverPanel()
@@ -311,5 +327,25 @@ public class PlayerController : MonoBehaviour
         }
 
         UpdateAmmoUI();
+    }
+
+    // --- МИГАЮЩИЙ ЦЕНТРАЛЬНЫЙ ТЕКСТ ---
+    private IEnumerator ShowReloadHint()
+    {
+        if (reloadHintText == null) yield break;
+
+        reloadHintText.gameObject.SetActive(true);
+        reloadHintText.text = "R to Reload!";
+
+        float t = 0f;
+        float duration = 1.4f;
+        while (t < duration)
+        {
+            float phase = Mathf.PingPong(Time.time * 3f, 1f);
+            reloadHintText.color = Color.Lerp(Color.red, Color.white, phase);
+            t += Time.deltaTime;
+            yield return null;
+        }
+        reloadHintText.gameObject.SetActive(false);
     }
 }

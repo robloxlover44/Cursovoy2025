@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -69.18, y: 0.14, z: 0}
-  m_LocalScale: {x: 1, y: 1.1556, z: 1}
+  m_LocalScale: {x: 1.0088, y: 1.1657692, z: 1.0088}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3788595475355934151}
@@ -137,6 +137,7 @@ MonoBehaviour:
   deathAnimationSpeed: 0.2
   currentWeapon: {fileID: 0}
   ammoText: {fileID: 0}
+  reloadHintText: {fileID: 0}
 --- !u!50 &7955981932185155224
 Rigidbody2D:
   serializedVersion: 5

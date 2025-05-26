@@ -718,7 +718,7 @@ GameObject:
   - component: {fileID: 7220371647936375234}
   - component: {fileID: 9148748087257859964}
   m_Layer: 5
-  m_Name: Katana
+  m_Name: Pistol
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1295,7 +1295,7 @@ RectTransform:
   m_GameObject: {fileID: 3714513490642138972}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.0693799, y: 0.09562597, z: 1.6452}
+  m_LocalScale: {x: 0.5128012, y: 0.109998554, z: 1.8924736}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7109738417316808916}
@@ -1333,7 +1333,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -3753825769889500098, guid: a8112d35695412a4e81d5ba2e0bfe5a3, type: 3}
+  m_Sprite: {fileID: -3798294997260195130, guid: 3f5e864c757fecc4e8048ca3ab8f8723, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3803,7 +3803,7 @@ MonoBehaviour:
   shopItems:
   - itemID: Pistol
     cost: 50
-    icon: {fileID: -3753825769889500098, guid: a8112d35695412a4e81d5ba2e0bfe5a3, type: 3}
+    icon: {fileID: -3798294997260195130, guid: 3f5e864c757fecc4e8048ca3ab8f8723, type: 3}
   - itemID: Shotgun
     cost: 200
     icon: {fileID: 2894344322067435035, guid: 4d8910ecea93b8d41b260265a7f51f65, type: 3}

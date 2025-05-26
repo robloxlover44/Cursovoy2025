@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4205100579002723687}
   - component: {fileID: 7300661161219032074}
   - component: {fileID: 2696502592279065357}
+  - component: {fileID: 6025838864412218308}
   m_Layer: 0
   m_Name: Circle (24)
   m_TagString: Untagged
@@ -106,3 +107,39 @@ MonoBehaviour:
   - {fileID: -2709159260267480730, guid: 34d2dbea2dc8f394ca09b7253d5b13f4, type: 3}
   - {fileID: 8933804953565901746, guid: 3d46c895972585f4888ee637bd86c2a7, type: 3}
   animationSpeed: 1
+--- !u!58 &6025838864412218308
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7187420327497247777}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 0.1
