@@ -97,7 +97,6 @@ public class ChaseEnemy : MonoBehaviour
 {
     if (patrolPositions == null || patrolPositions.Length < 2)
     {
-        transform.localEulerAngles = Vector3.zero;
         return;
     }
 

@@ -101,7 +101,7 @@ public class ShooterEnemy : MonoBehaviour
         if (patrolPositions == null || patrolPositions.Length < 2)
     {
         // Не крутимся
-        transform.localEulerAngles = Vector3.zero;
+
         return;
     }
 

@@ -8,11 +8,32 @@ public class Chest : MonoBehaviour
     public int minLoot = 1;
     public int maxLoot = 3;
 
+    [Header("Levitating Settings")]
+    public float levitateHeight = 0.15f;   // высота левитации (юнитов)
+    public float levitateSpeed = 1.7f;     // скорость качания
+
     private bool canOpen = false;
     private bool isOpened = false;
+    private float levitateTimeOffset;
+    private Vector3 startPos;
 
-    private void Update()
+    void Start()
     {
+        // Сохраняем стартовую позицию для плавного возврата
+        startPos = transform.position;
+        levitateTimeOffset = Random.Range(0f, 99f);
+    }
+
+    void Update()
+    {
+        // Левитация, пока сундук жив
+        if (!isOpened)
+        {
+            float newY = startPos.y + Mathf.Sin(Time.time * levitateSpeed + levitateTimeOffset) * levitateHeight;
+            transform.position = new Vector3(startPos.x, newY, startPos.z);
+        }
+
+        // Активация мини-игры
         if (canOpen && !isOpened && Input.GetKeyDown(KeyCode.E))
         {
             if (wirePuzzlePanel != null)
@@ -34,15 +55,27 @@ public class Chest : MonoBehaviour
 
         isOpened = true;
 
-        // Дроп лута
-        int lootCount = Random.Range(minLoot, maxLoot + 1);
-        for (int i = 0; i < lootCount; i++)
-        {
-            Instantiate(lootPrefab, lootSpawnPoint.position, Quaternion.identity);
-        }
+        // Отключаем левитацию (чтобы не дёргался)
+        // и фиксируем позицию для анимации
+        LeanTween.cancel(gameObject);
+        transform.position = new Vector3(startPos.x, startPos.y, startPos.z);
 
-        // Тут можно запустить анимацию открытия
-        // GetComponent<Animator>()?.SetTrigger("Open");
+        // COLLPASE-АНИМАЦИЯ!
+        float collapseTime = 0.5f;
+        LeanTween.scale(gameObject, Vector3.one * 1.15f, 0.2f)
+            .setEase(LeanTweenType.easeOutQuad)
+            .setOnComplete(() =>
+            {
+                LeanTween.scale(gameObject, Vector3.zero, collapseTime)
+                .setEase(LeanTweenType.easeInBack)
+                .setOnComplete(() =>
+                {
+                    // Спавним лут после анимации
+                    DropLoot();
+                    // Скрываем сундук (можно удалить, если надо)
+                    gameObject.SetActive(false);
+                });
+            });
 
         // Скрываем мини-игру (на всякий)
         if (wirePuzzlePanel != null)
@@ -50,6 +83,24 @@ public class Chest : MonoBehaviour
 
         // Возвращаем время в игре
         Time.timeScale = 1f;
+    }
+
+    void DropLoot()
+    {
+        int lootCount = Random.Range(minLoot, maxLoot + 1);
+        for (int i = 0; i < lootCount; i++)
+        {
+            GameObject loot = Instantiate(lootPrefab, lootSpawnPoint.position, Quaternion.identity);
+
+            // Делаем выплёвывание лута: разлёт в разные стороны
+            Vector2 randomDir = Random.insideUnitCircle.normalized;
+            float power = Random.Range(2f, 4f);
+            Rigidbody2D rb = loot.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.AddForce(randomDir * power, ForceMode2D.Impulse);
+            }
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

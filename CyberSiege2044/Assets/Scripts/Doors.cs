@@ -1,114 +1,107 @@
 using UnityEngine;
 using TMPro;
-using static LeanTween;
+using System.Collections;
 
 public class DoorController : MonoBehaviour
 {
-    [SerializeField] private int requiredShards = 10; // Необходимое количество осколков
-    [SerializeField] private TMP_Text shardText; // Текст для отображения "X/Y"
-    [SerializeField] private float shakeDuration = 0.5f; // Длительность тряски
-    [SerializeField] private float shakeStrength = 0.1f; // Сила тряски
+    public int requiredShards = 1;
+    public TMP_Text shardText;
+    public GameObject wirePuzzlePanel; // Сюда закинь свой Canvas с WirePuzzle
 
-    private bool isPlayerNear = false; // Флаг, находится ли игрок рядом
-    private Color originalColor; // Исходный цвет текста
+    public float shakeAmount = 16f;
+    public float shakeDuration = 0.23f;
+    public Color failColor = Color.red;
 
-    void Start()
+    [HideInInspector] public bool isPlayerNear = false;
+
+    private void Start()
     {
-        if (shardText == null)
-        {
-            Debug.LogError("ShardText is not assigned in the inspector!");
-            return;
-        }
-
-        // Сохраняем исходный цвет текста
-        originalColor = shardText.color;
-
-        // Инициализируем LeanTween
-        LeanTween.init();
-
-        // Обновляем текст при старте
         UpdateShardText();
     }
 
-    void Update()
+    private void Update()
     {
-        // Проверяем нажатие E, если игрок рядом
-        if (isPlayerNear && Input.GetKeyDown(KeyCode.E))
+        if (!isPlayerNear)
+            return;
+
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            TryOpenDoor();
+            int playerShards = PlayerDataManager.Instance.GetShards();
+            if (playerShards >= requiredShards)
+            {
+                // Запуск мини-игры (аналогично сундуку)
+                if (wirePuzzlePanel != null)
+                {
+                    wirePuzzlePanel.SetActive(true);
+                    Time.timeScale = 0f;
+
+                    WirePuzzle puzzle = wirePuzzlePanel.GetComponent<WirePuzzle>();
+                    if (puzzle != null)
+                    {
+                        puzzle.targetChest = null;   // Это не сундук!
+                        puzzle.doorToOpen = this;    // Передаём себя мини-игре (для открытия)
+                    }
+                }
+            }
+            else
+            {
+                StartCoroutine(ShakeAndColorText());
+            }
         }
     }
 
-    private void TryOpenDoor()
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (PlayerDataManager.Instance == null)
+        if (collision.CompareTag("Player"))
         {
-            Debug.LogError("PlayerDataManager.Instance is null!");
-            return;
+            isPlayerNear = true;
+            UpdateShardText();
         }
+    }
 
-        int playerShards = PlayerDataManager.Instance.GetShards();
-
-        if (playerShards >= requiredShards)
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player"))
         {
-            // Успешное открытие: тратим осколки и убираем дверь
-            PlayerDataManager.Instance.SpendShards(requiredShards);
-            Destroy(gameObject); // Дверь исчезает
-            Debug.Log("Door opened successfully!");
+            isPlayerNear = false;
         }
-        else
-        {
-            // Не хватает осколков: анимация текста
-            AnimateFailure();
-            Debug.Log("Not enough shards to open the door!");
-        }
+    }
 
-        // Обновляем текст после попытки
-        UpdateShardText();
+    public void OpenDoor()
+    {
+        // Тратим шарды
+        PlayerDataManager.Instance.SpendShards(requiredShards);
+
+        // Можно добавить анимацию открытия/исчезновения двери!
+        Destroy(gameObject);
     }
 
     private void UpdateShardText()
     {
-        if (PlayerDataManager.Instance != null && shardText != null)
-        {
-            int playerShards = PlayerDataManager.Instance.GetShards();
-            shardText.text = $"{playerShards}/{requiredShards}";
-        }
+        if (shardText == null)
+            return;
+
+        int playerShards = PlayerDataManager.Instance.GetShards();
+        shardText.text = $"{playerShards} / {requiredShards}";
+        shardText.color = playerShards >= requiredShards ? Color.white : Color.red;
     }
 
-    private void AnimateFailure()
+    private IEnumerator ShakeAndColorText()
     {
-        if (shardText == null) return;
+        Vector3 origPos = shardText.rectTransform.localPosition;
+        Color origColor = shardText.color;
+        shardText.color = failColor;
 
-        // Отменяем предыдущие анимации
-        LeanTween.cancel(shardText.gameObject);
-
-        // Анимация изменения цвета на красный и обратно
-        LeanTween.value(shardText.gameObject, originalColor, Color.red, shakeDuration / 2)
-            .setOnUpdate((Color val) => shardText.color = val)
-            .setLoopPingPong(1); // Один цикл туда-обратно
-
-        // Анимация тряски
-        LeanTween.moveX(shardText.gameObject, shardText.transform.position.x + shakeStrength, shakeDuration / 2)
-            .setEase(LeanTweenType.easeShake)
-            .setLoopCount(2); // Тряска дважды
-    }
-
-    // Проверка, находится ли игрок рядом с дверью
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Player"))
+        float elapsed = 0f;
+        while (elapsed < shakeDuration)
         {
-            isPlayerNear = true;
-            UpdateShardText(); // Обновляем текст, когда игрок подошел
+            float x = Random.Range(-1f, 1f) * shakeAmount;
+            float y = Random.Range(-1f, 1f) * shakeAmount;
+            shardText.rectTransform.localPosition = origPos + new Vector3(x, y, 0);
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
         }
-    }
-
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            isPlayerNear = false;
-        }
+        shardText.rectTransform.localPosition = origPos;
+        shardText.color = origColor;
     }
 }
