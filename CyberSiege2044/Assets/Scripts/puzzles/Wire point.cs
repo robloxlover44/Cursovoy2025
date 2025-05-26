@@ -1,35 +1,22 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class WirePoint : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class WirePoint : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    public Color wireColor;
-    public bool isLeftPoint;
-    public int pointIndex;
-
+    public Color wireColor;     // Для визуала
+    public int wireIndex;       // Индекс, по которому ищем пару!
     [HideInInspector] public bool isConnected = false;
     [HideInInspector] public WirePuzzle parentPuzzle;
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        // ТОЛЬКО для инициации drag
+        if (!isConnected && parentPuzzle != null && !parentPuzzle.isDragging)
+            parentPuzzle.StartDrag(this);
     }
 
-    public void OnBeginDrag(PointerEventData eventData)
+    public void OnPointerUp(PointerEventData eventData)
     {
-        if (!isLeftPoint ||isConnected|| parentPuzzle.isDragging)
-            return;
-        parentPuzzle.StartDrag(this);
-    }
-
-    public void OnDrag(PointerEventData eventData)
-    {
-        // Не нужно здесь — Update() в WirePuzzle уже рисует линию
-    }
-
-    public void OnEndDrag(PointerEventData eventData)
-    {
-        if (parentPuzzle.isDragging)
+        if (parentPuzzle != null && parentPuzzle.isDragging)
             parentPuzzle.EndDrag();
     }
 }
