@@ -524,6 +524,10 @@ PrefabInstance:
       propertyPath: requiredShards
       value: 40
       objectReference: {fileID: 0}
+    - target: {fileID: 1753226803889468565, guid: 90fa0cfc2ef5d2d45b95ef66bea7efac, type: 3}
+      propertyPath: wirePuzzlePanel
+      value: 
+      objectReference: {fileID: 2091211776}
     - target: {fileID: 3272208218869316861, guid: 90fa0cfc2ef5d2d45b95ef66bea7efac, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.2701797
@@ -26753,6 +26757,7 @@ MonoBehaviour:
   lineImagePrefab: {fileID: 1487242884181051912, guid: d18380252e44ee140b2a8f6d87b9506b, type: 3}
   linesParent: {fileID: 37938765}
   targetChest: {fileID: 0}
+  doorToOpen: {fileID: 0}
   possibleColors:
   - {r: 1, g: 0.051886797, b: 0.051886797, a: 1}
   - {r: 0, g: 0.19427729, b: 1, a: 1}
