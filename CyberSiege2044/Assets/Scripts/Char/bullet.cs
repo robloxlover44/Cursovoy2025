@@ -32,12 +32,13 @@ public class Projectile : MonoBehaviour
             }
 
             // Проверяем ShooterEnemy
-            ShooterEnemy shooterEnemy = other.GetComponent<ShooterEnemy>();
-            if (shooterEnemy != null)
+            TurretController turret = other.GetComponent<TurretController>();
+            if (turret != null)
             {
-                shooterEnemy.TakeDamage(damage); // Наносим урон ShooterEnemy
-                Destroy(gameObject); // Уничтожаем пулю после попадания
+                turret.TakeDamage(damage);
+                Destroy(gameObject);
             }
+
         }
         else if (other.CompareTag("Wall") || other.CompareTag("Obstacle"))
         {

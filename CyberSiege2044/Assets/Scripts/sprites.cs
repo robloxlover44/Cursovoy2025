@@ -3,8 +3,8 @@ using UnityEngine;
 public class FANS : MonoBehaviour
 {
     [Header("Idle Animation Settings")]
-    [SerializeField] private Sprite[] idleSprites;  // Массив спрайтов для анимации Idle
-    [SerializeField] private float animationSpeed = 0.1f;  // Скорость анимации
+    [SerializeField] private Sprite[] idleSprites;  // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Idle
+    [SerializeField] private float animationSpeed = 0.1f;  // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
     private SpriteRenderer spriteRenderer;
     private float animationTimer;
@@ -25,7 +25,7 @@ public class FANS : MonoBehaviour
     if (idleSprites == null || idleSprites.Length == 0)
         return;
 
-    animationTimer += Time.unscaledDeltaTime; // Используем unscaledDeltaTime
+    animationTimer += Time.unscaledDeltaTime; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ unscaledDeltaTime
     if (animationTimer >= animationSpeed)
     {
         animationTimer = 0f;

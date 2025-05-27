@@ -13,7 +13,8 @@ public class PlayerController : MonoBehaviour
     public Sprite[] idleSprites;
     public Sprite[] runSprites;
     public float animationSpeed = 0.1f;
-    public Transform cameraTransform;
+
+    //public Transform cameraTransform; // ОСТАВЛЯЕМ на будущее, но не используем для позиции!
     public Vector3 cameraOffset;
 
     private Vector2 movement;
@@ -30,11 +31,6 @@ public class PlayerController : MonoBehaviour
     public GameObject currentWeaponObject;
     private int currentWeaponIndex = -1;
 
-    public float shakeIntensity = 0.2f;
-    public float shakeSpeed = 5f;
-    private float shakeTimeOffsetX;
-    private float shakeTimeOffsetY;
-
     [Header("Death Settings")]
     public Sprite[] deathSprites;
     public GameObject gameOverPanel;
@@ -43,23 +39,15 @@ public class PlayerController : MonoBehaviour
 
     [Header("UI Settings")]
     public TMP_Text ammoText;
-    public TMP_Text reloadHintText; // <-- Новый TMP_Text по центру для "R to Reload!"
+    public TMP_Text reloadHintText;
 
-    private bool isDead = false; // Флаг смерти
+    private bool isDead = false;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         dashController = GetComponentInChildren<DashController>();
         mainCamera = Camera.main;
-
-        if (cameraTransform != null && cameraOffset == Vector3.zero)
-        {
-            cameraOffset = cameraTransform.position - transform.position;
-        }
-
-        shakeTimeOffsetX = Random.value * 10f;
-        shakeTimeOffsetY = Random.value * 10f;
 
         List<string> weaponIDs = PlayerDataManager.Instance.GetInventoryWeapons();
         foreach (string weaponID in weaponIDs)
@@ -117,7 +105,6 @@ public class PlayerController : MonoBehaviour
 
         Animate();
         RotateToMouse();
-        UpdateCameraPosition();
 
         // --- ОБНОВЛЁННАЯ стрельба ---
         if (Input.GetMouseButtonDown(0) && currentWeapon != null)
@@ -238,21 +225,8 @@ public class PlayerController : MonoBehaviour
         rb.rotation = Mathf.MoveTowardsAngle(rb.rotation, targetAngle, rotationSpeed * Time.deltaTime);
     }
 
-    void UpdateCameraPosition()
-    {
-        if (cameraTransform != null)
-        {
-            Vector3 shakeOffset = ShakeCamera();
-            cameraTransform.position = transform.position + cameraOffset + shakeOffset;
-        }
-    }
-
-    Vector3 ShakeCamera()
-    {
-        float xShake = (Mathf.PerlinNoise(Time.time * shakeSpeed, shakeTimeOffsetX) - 0.5f) * shakeIntensity;
-        float yShake = (Mathf.PerlinNoise(Time.time * shakeSpeed, shakeTimeOffsetY) - 0.5f) * shakeIntensity;
-        return new Vector3(xShake, yShake, 0);
-    }
+    // *** УДАЛЕНО: UpdateCameraPosition и ShakeCamera ***
+    // Cinemachine теперь сама рулит MainCamera!
 
     public void SwitchWeapon(int index)
     {

@@ -18,23 +18,17 @@ public class AimLineRenderer : MonoBehaviour
     void Awake()
     {
         lr = GetComponent<LineRenderer>();
-        // Всегда две точки
         lr.positionCount = 2;
-        // Используем мировые координаты
         lr.useWorldSpace = true;
-        // Ширина линии
         lr.widthMultiplier = 0.01f;
-        // Устанавливаем материал по умолчанию, если его нет
         if (lr.material == null)
             lr.material = new Material(Shader.Find("Sprites/Default"));
-        // Сортировка поверх спрайтов
         lr.sortingLayerName = "Default";
         lr.sortingOrder = 100;
     }
 
     void Update()
     {
-        // Если навык не разблокирован, скрываем линию
         if (onlyWhenUnlocked && !PlayerDataManager.Instance.IsSkillUnlocked(skillID))
         {
             lr.enabled = false;
@@ -43,28 +37,35 @@ public class AimLineRenderer : MonoBehaviour
 
         lr.enabled = true;
 
-        // Определяем начало и направление луча
         Vector2 origin = transform.position;
         Vector2 direction = transform.right;
 
-        // Выполняем Raycast в 2D
+        // Новый Raycast, который ищет только НЕ-триггерные коллайдеры!
         RaycastHit2D hit = Physics2D.Raycast(origin, direction, aimLength, obstacleMask);
 
         Vector3 startPoint = origin;
-        Vector3 endPoint;
+        Vector3 endPoint = origin + direction * aimLength;
 
-        if (hit.collider != null)
+        // Проверяем, что коллайдер найден и НЕ является триггером
+        if (hit.collider != null && !hit.collider.isTrigger)
         {
-            // Останавливаемся на точке столкновения
             endPoint = hit.point;
         }
-        else
+        else if (hit.collider != null && hit.collider.isTrigger)
         {
-            // Максимальная длина
-            endPoint = origin + direction * aimLength;
+            // Если первый коллайдер — триггер, ищем дальше по лучу…
+            // CastAll и ищем первый НЕ-триггерный хит
+            RaycastHit2D[] hits = Physics2D.RaycastAll(origin, direction, aimLength, obstacleMask);
+            foreach (var h in hits)
+            {
+                if (h.collider != null && !h.collider.isTrigger)
+                {
+                    endPoint = h.point;
+                    break;
+                }
+            }
         }
 
-        // Устанавливаем позиции линии
         lr.SetPosition(0, startPoint);
         lr.SetPosition(1, endPoint);
     }

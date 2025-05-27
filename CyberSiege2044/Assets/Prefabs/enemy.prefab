@@ -81,7 +81,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 1c1d4ce681c1c9f44bdba67517cae6c9, type: 3}
+  m_Sprite: {fileID: -5167727344205179306, guid: 5eb8c72824b95754da7d30a5eae36c24, type: 3}
   m_Color: {r: 0, g: 0.785728, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -110,18 +110,18 @@ MonoBehaviour:
   patrolPoints:
   - {fileID: 0}
   - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   patrolSpeed: 3
   patrolFrameRate: 0.3
   damage: 50
   maxHealth: 150
   runAnimation:
-  - {fileID: 21300000, guid: 6f13cd5c70060474282a55a34042aefc, type: 3}
-  - {fileID: 21300000, guid: 2ce8e8f01bcf94b42961a28bc30b9389, type: 3}
+  - {fileID: -6923412738515936587, guid: 2d134b0fe22e1c84282b490b7c23623f, type: 3}
+  - {fileID: 186037932506831006, guid: 845e98d90b0b76c4fb97fbc5863eb98b, type: 3}
   explodeAnimation:
-  - {fileID: 21300000, guid: 1e7567e5be7f4db4d92ba776e7355a43, type: 3}
-  - {fileID: 21300000, guid: 8caf2a9cf06189549b58b76408ad0222, type: 3}
-  - {fileID: 21300000, guid: 7ae5c234e2d81234288539d8366a216b, type: 3}
-  - {fileID: 21300000, guid: 71ba4a9fa90c3014a845652c128f7cd2, type: 3}
+  - {fileID: 2598046461377586253, guid: f20e1bce2c66cb643903f36817e18148, type: 3}
+  - {fileID: -4277546623687089769, guid: 810f216bba4c3e74aa5e66606ede8abf, type: 3}
   - {fileID: 21300000, guid: 94b23efc19689574890c60359a7488ea, type: 3}
   - {fileID: -8083698455202549152, guid: c648f61bc57715a4e86b8984e3d78ef0, type: 3}
   - {fileID: -5387648806950423354, guid: 0690e32c16aa2bc40a43e546b0b51686, type: 3}
@@ -130,7 +130,7 @@ MonoBehaviour:
   - {fileID: -8391165118550965929, guid: f83dac3dc4142f149bdefb59dfc0b464, type: 3}
   - {fileID: 6999115610438063342, guid: 3ee2eeff2b59502499ad1611b1fa5844, type: 3}
   - {fileID: -3609075002000088743, guid: f034b2aef92525b40bdf737cd886f53e, type: 3}
-  frameRate: 0.1
+  frameRate: 0.05
   shardLootPrefab: {fileID: 8093617953439337102, guid: ab1a7981af391754f86da808ebcf06b1, type: 3}
   moneyLootPrefab: {fileID: 8093617953439337102, guid: 1ebda93ec62107a4bb581fd59da1396b, type: 3}
   moneyRange: {x: 5, y: 20}
@@ -237,17 +237,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.018533856, y: 0.040436134}
+  m_Offset: {x: 0.053885087, y: 0.0014416277}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1.5}
+    oldSize: {x: 0.54, y: 0.39}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.26877755, y: 0.8867172}
+  m_Size: {x: 0.41361544, y: 0.41878062}
   m_EdgeRadius: 0
 --- !u!1 &9059736051059722257
 GameObject:

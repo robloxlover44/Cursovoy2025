@@ -1,38 +1,28 @@
 using UnityEngine;
 using System.Collections;
-using static LeanTween; // Для анимации выпадения лута
+using static LeanTween;
 
-public class ShooterEnemy : MonoBehaviour
+public class TurretController : MonoBehaviour
 {
-    public enum EnemyState { Patrol, Shooting }
-
-    [Header("Trigger Settings")]
+    [Header("Refs")]
+    public Transform turretBody; // пустышка Turret с pivot по центру базы
+    public Transform firePoint;  // fp — на конце дула
     public Collider2D triggerZone;
-
-    [Header("Patrol Settings")]
-    public Transform[] patrolPoints;        // Настраиваемые точки патруля
-    public float patrolSpeed = 2f;          // Скорость передвижения при патруле
-
-    [Header("Patrol Animation Settings")]
-    public Sprite[] patrolAnimation;        // Спрайты «ходьбы» при патруле
-    public float patrolFrameRate = 0.5f;    // Частота смены кадров при патруле
+    private SpriteRenderer turretRenderer;
+    private SpriteRenderer platformRenderer;
 
     [Header("Shooting Settings")]
     public GameObject bulletPrefab;
-    public Transform firePoint;
-    public float bulletSpeed = 5f;
+    public float bulletSpeed = 7f;
     public float fireRate = 1f;
 
-    [Header("Shooting Animation Settings")]
-    public Sprite[] shootAnimation;
-    public float shootFrameRate = 0.15f;
-
     [Header("Health Settings")]
-    public int maxHealth = 100;             // Максимальное здоровье
+    public int maxHealth = 100;
+    private int currentHealth;
 
     [Header("Death Animation Settings")]
-    public Sprite[] deathAnimation;
-    public float deathFrameRate = 0.15f;
+    public Sprite[] deathAnimation;         // Массив кадров анимации смерти
+    public float deathFrameRate = 0.15f;    // Скорость анимации смерти
 
     [Header("Loot Drop Settings")]
     public GameObject shardLootPrefab;
@@ -45,153 +35,125 @@ public class ShooterEnemy : MonoBehaviour
     public LeanTweenType fallEase = LeanTweenType.easeInQuad;
     public LeanTweenType bounceEase = LeanTweenType.easeOutBounce;
 
-    // --- внутренние поля ---
-    private Transform player;
-    private SpriteRenderer spriteRenderer;
-    private EnemyState currentState = EnemyState.Patrol;
-    private Coroutine animationCoroutine;
-    private int currentHealth;
-    private float nextFireTime;
+    [Header("Player Detection")]
+    public LayerMask playerLayer;
 
-    // Патруль
-    private Vector3[] patrolPositions;
-    private int currentPatrolIndex = 0;
-    private float currentFrameRate;
+    [Header("Turret Settings")]
+    [SerializeField] float rotationSpeed = 720f;
+
+    // Новые массивы спрайтов для тревоги
+    [Header("Alert Sprites")]
+    public Sprite[] platformAlertSprites;  // Спрайты платформы для тревоги
+    public Sprite[] turretAlertSprites;    // Спрайты турели для тревоги
+    private Sprite[] defaultPlatformSprites; // Для восстановления оригинальных спрайтов
+    private Sprite[] defaultTurretSprites;   // Для восстановления оригинальных спрайтов
+
+    private Transform player;
+    private bool playerInZone = false;
+    private float nextFireTime = 0f;
+    private bool isDead = false;
 
     void Start()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        player = GameObject.FindGameObjectWithTag("Player").transform;
-
+        currentHealth = maxHealth;
+        player = GameObject.FindGameObjectWithTag("Player")?.transform;
         if (triggerZone == null)
             triggerZone = GetComponent<Collider2D>();
         triggerZone.isTrigger = true;
 
-        currentHealth = maxHealth;
+        // Находим SpriteRenderer на платформе и турели
+        turretRenderer = turretBody.GetComponentInChildren<SpriteRenderer>();
+        platformRenderer = GetComponentInChildren<SpriteRenderer>();
 
-        CachePatrolPositions();
-        EnterPatrol();
+        // Сохраняем оригинальные спрайты
+        defaultTurretSprites = new Sprite[] { turretRenderer.sprite };
+        defaultPlatformSprites = new Sprite[] { platformRenderer.sprite };
     }
 
     void Update()
     {
-        if (currentState == EnemyState.Patrol)
+        if (isDead) return;
+        if (playerInZone && player != null)
         {
-            Patrol();
-        }
-        else // Shooting
-        {
-            ShootAtPlayer();
-            RotateTowardsPlayer();
+            RotateTurretToPlayer();
+            if (CanSeePlayer())
+                TryShoot();
         }
     }
 
-    private void CachePatrolPositions()
+    void RotateTurretToPlayer()
     {
-        if (patrolPoints != null && patrolPoints.Length > 0)
-        {
-            patrolPositions = new Vector3[patrolPoints.Length];
-            for (int i = 0; i < patrolPoints.Length; i++)
-                patrolPositions[i] = patrolPoints[i].position;
-        }
+        Vector2 dir = (player.position - turretBody.position).normalized;
+        float targetAngle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        float currentAngle = turretBody.eulerAngles.z;
+        float newAngle = Mathf.MoveTowardsAngle(currentAngle, targetAngle, rotationSpeed * Time.deltaTime);
+        turretBody.rotation = Quaternion.Euler(0f, 0f, newAngle);
     }
 
-    private void Patrol()
+    bool CanSeePlayer()
     {
-        if (patrolPositions == null || patrolPositions.Length < 2)
-    {
-        // Не крутимся
-
-        return;
+        Vector2 origin = firePoint.position;
+        Vector2 target = player.position;
+        RaycastHit2D hit = Physics2D.Raycast(origin, target - origin, Vector2.Distance(origin, target), playerLayer | LayerMask.GetMask("Obstacle"));
+        if (hit.collider != null && hit.collider.CompareTag("Player"))
+            return true;
+        return false;
     }
 
-
-        Vector2 currentPos = transform.position;
-        Vector2 targetPos = patrolPositions[currentPatrolIndex];
-        float dist = Vector2.Distance(currentPos, targetPos);
-        const float arrivalThreshold = 0.1f;
-
-        if (dist > arrivalThreshold)
+    void TryShoot()
+    {
+        if (Time.time < nextFireTime) return;
+        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+        if (bullet.TryGetComponent<Rigidbody2D>(out var rb))
         {
-            Vector2 dir = (targetPos - currentPos).normalized;
-            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-            transform.localEulerAngles = new Vector3(0f, 0f, angle);
-
-            transform.position = Vector2.MoveTowards(
-                currentPos,
-                targetPos,
-                patrolSpeed * Time.deltaTime
-            );
+            rb.linearVelocity = firePoint.right * bulletSpeed;
         }
-        else
-        {
-            currentPatrolIndex = (currentPatrolIndex + 1) % patrolPositions.Length;
-        }
+        nextFireTime = Time.time + 1f / fireRate;
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player") && currentState == EnemyState.Patrol)
-            EnterShooting();
+        if (other.CompareTag("Player"))
+        {
+            playerInZone = true;
+            SwitchToAlertMode(); // Включаем режим тревоги
+        }
     }
 
     void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Player") && currentState == EnemyState.Shooting)
-            EnterPatrol();
-    }
-
-    private void ShootAtPlayer()
-    {
-        if (Time.time < nextFireTime) return;
-
-        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-        if (bullet.TryGetComponent<PlayerDamagingProjectile>(out var projectile))
+        if (other.CompareTag("Player"))
         {
-            Vector2 dir = (player.position - firePoint.position).normalized;
-            projectile.SetDirection(dir);
+            playerInZone = false;
+            SwitchToNormalMode(); // Возвращаем обычные спрайты
         }
-        if (bullet.TryGetComponent<Rigidbody2D>(out var rb))
-        {
-            Vector2 dir = (player.position - firePoint.position).normalized;
-            rb.linearVelocity = dir * bulletSpeed;
-        }
-
-        nextFireTime = Time.time + 1f / fireRate;
-    }
-
-    private void RotateTowardsPlayer()
-    {
-        if (player == null) return;
-        Vector2 dir = (player.position - transform.position).normalized;
-        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
 
     public void TakeDamage(int damage)
     {
+        if (isDead) return;
         currentHealth -= damage;
         if (currentHealth <= 0)
-            Die();
+            StartCoroutine(DieAndDropLootWithAnimation());
     }
 
-    private void Die()
+    IEnumerator DieAndDropLootWithAnimation()
     {
-        StopAllCoroutines();
+        isDead = true;
         triggerZone.enabled = false;
-        StartCoroutine(PlayDeathAnimation());
-    }
 
-    IEnumerator PlayDeathAnimation()
-    {
-        // Используем deathFrameRate
-        foreach (Sprite frame in deathAnimation)
+        // Анимация смерти
+        if (deathAnimation != null && deathAnimation.Length > 0 && turretRenderer != null)
         {
-            spriteRenderer.sprite = frame;
-            yield return new WaitForSeconds(deathFrameRate);
+            foreach (Sprite frame in deathAnimation)
+            {
+                turretRenderer.sprite = frame;
+                yield return new WaitForSeconds(deathFrameRate);
+            }
         }
 
         SpawnLoot();
+        yield return new WaitForSeconds(0.1f); // чуть-чуть задержки для плавности
         Destroy(gameObject);
     }
 
@@ -227,30 +189,23 @@ public class ShooterEnemy : MonoBehaviour
         seq.append(() => LeanTween.moveY(loot, targetPos.y, fallDuration * 0.5f).setEase(LeanTweenType.easeInQuad));
     }
 
-    private void EnterPatrol()
+    // Включаем тревогу, меняем на красные спрайты
+    private void SwitchToAlertMode()
     {
-        currentState = EnemyState.Patrol;
-        currentFrameRate = patrolFrameRate;
-        if (animationCoroutine != null) StopCoroutine(animationCoroutine);
-        animationCoroutine = StartCoroutine(AnimateSprite(patrolAnimation, patrolFrameRate));
-    }
-
-    private void EnterShooting()
-    {
-        currentState = EnemyState.Shooting;
-        currentFrameRate = shootFrameRate;
-        if (animationCoroutine != null) StopCoroutine(animationCoroutine);
-        animationCoroutine = StartCoroutine(AnimateSprite(shootAnimation, shootFrameRate));
-    }
-
-    private IEnumerator AnimateSprite(Sprite[] frames, float rate)
-    {
-        int idx = 0;
-        while (true)
+        if (platformAlertSprites.Length > 0 && turretAlertSprites.Length > 0)
         {
-            spriteRenderer.sprite = frames[idx];
-            idx = (idx + 1) % frames.Length;
-            yield return new WaitForSeconds(rate);
+            platformRenderer.sprite = platformAlertSprites[0]; // Установи первый спрайт тревоги платформы
+            turretRenderer.sprite = turretAlertSprites[0];    // Установи первый спрайт тревоги турели
+        }
+    }
+
+    // Возвращаем спрайты в нормальное состояние
+    private void SwitchToNormalMode()
+    {
+        if (defaultPlatformSprites.Length > 0 && defaultTurretSprites.Length > 0)
+        {
+            platformRenderer.sprite = defaultPlatformSprites[0]; // Возвращаем оригинальный спрайт платформы
+            turretRenderer.sprite = defaultTurretSprites[0];     // Возвращаем оригинальный спрайт турели
         }
     }
 }
