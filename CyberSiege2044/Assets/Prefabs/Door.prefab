@@ -407,10 +407,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edd0f4cc9d005c94489bd0b95254ce95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  requiredShards: 10
+  requiredShards: 40
   shardText: {fileID: 1384464809376767169}
+  wirePuzzlePanel: {fileID: 0}
+  shakeAmount: 16
   shakeDuration: 0.5
-  shakeStrength: 0.1
+  failColor: {r: 1, g: 0, b: 0, a: 1}
+  isPlayerNear: 0
 --- !u!58 &2907786789014798392
 CircleCollider2D:
   m_ObjectHideFlags: 0
