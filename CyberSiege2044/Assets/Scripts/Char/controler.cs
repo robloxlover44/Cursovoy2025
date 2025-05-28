@@ -190,12 +190,15 @@ void FixedUpdate()
     if (dashController != null && dashController.IsDashing)
         return;
 
+    // Сохраняем targetPos для MovePosition
     Vector2 targetPos = rb.position + movement * moveSpeed * Time.fixedDeltaTime;
+
     rb.MovePosition(targetPos);
 
-    // ВСЕГДА стопим velocity для ручного управления
+    // ЖЁСТКО стопим всю скорость всегда, чтобы не было ползания и тряски!
     rb.linearVelocity = Vector2.zero;
 }
+
 
 
 
