@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Projectile : MonoBehaviour
+public class bullet : MonoBehaviour
 {
     public float speed = 10f; // Скорость пули
     public float damage = 0.1f; // Урон, наносимый пулей, настраивается в инспекторе
@@ -20,25 +20,35 @@ public class Projectile : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        // --- Обычные враги (ChaseEnemy, TurretController) ---
         if (other.CompareTag("Enemy") && other is BoxCollider2D)
         {
-            // Проверяем ChaseEnemy
+            // ChaseEnemy
             ChaseEnemy chaseEnemy = other.GetComponent<ChaseEnemy>();
             if (chaseEnemy != null)
             {
-                chaseEnemy.TakeDamage(damage); // Наносим урон ChaseEnemy
-                Destroy(gameObject); // Уничтожаем пулю после попадания
-                return; // Выходим, чтобы не проверять дальше
+                chaseEnemy.TakeDamage(damage);
+                Destroy(gameObject);
+                return;
             }
 
-            // Проверяем ShooterEnemy
+            // ShooterEnemy
             TurretController turret = other.GetComponent<TurretController>();
             if (turret != null)
             {
                 turret.TakeDamage(damage);
                 Destroy(gameObject);
+                return;
             }
 
+            // --- БОСС ---
+            BossEnemy boss = other.GetComponent<BossEnemy>();
+            if (boss != null)
+            {
+                boss.TakeDamage(damage);
+                Destroy(gameObject);
+                return;
+            }
         }
         else if (other.CompareTag("Wall") || other.CompareTag("Obstacle"))
         {

@@ -11,6 +11,12 @@ public class BossEnemy : MonoBehaviour
     public int maxHealth = 1000;
     private int currentHealth;
 
+    // --- Публичное свойство для HP бара ---
+    public int CurrentHealth
+    {
+        get { return currentHealth; }
+    }
+
     [Header("Shooting")]
     public float fireRate = 1f;
     public float bulletSpeed = 7f;
@@ -75,7 +81,7 @@ public class BossEnemy : MonoBehaviour
     {
         if (other.CompareTag("Player") && !playerInZone)
         {
-            playerInZone = true;
+            playerInZone = true;    
             StartCoroutine(WaveAttackRoutine());
             StartCoroutine(DashRoutine());
         }
@@ -85,7 +91,7 @@ public class BossEnemy : MonoBehaviour
     {
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.Euler(0, 0, angle));
-        var proj = bullet.GetComponent<Projectile>();
+        var proj = bullet.GetComponent<bullet>();
         if (proj != null)
             proj.SetDirection(dir);
 
@@ -120,7 +126,7 @@ public class BossEnemy : MonoBehaviour
             float angle = i * step;
             Vector2 dir = new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad));
             GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.Euler(0, 0, angle));
-            var proj = bullet.GetComponent<Projectile>();
+            var proj = bullet.GetComponent<bullet>();
             if (proj != null) proj.SetDirection(dir);
             var rb2d = bullet.GetComponent<Rigidbody2D>();
             if (rb2d != null) rb2d.linearVelocity = dir * bulletSpeed;
@@ -188,10 +194,19 @@ public class BossEnemy : MonoBehaviour
         isDashing = false;
     }
 
-    public void TakeDamage(float dmg)
+public void TakeDamage(float dmg)
+{
+    currentHealth -= (int)dmg;
+    if (currentHealth <= 0)
     {
-        currentHealth -= (int)dmg;
-        if (currentHealth <= 0)
-            Destroy(gameObject);
+        currentHealth = 0;
+        StartCoroutine(DestroyAfterDelay());
     }
+}
+
+IEnumerator DestroyAfterDelay()
+{
+    yield return null; // ждём один кадр, чтобы HP-бар успел обновиться
+    Destroy(gameObject);
+}
 }

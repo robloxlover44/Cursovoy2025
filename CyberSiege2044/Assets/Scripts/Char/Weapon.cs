@@ -86,7 +86,7 @@ public class Weapon : MonoBehaviour
             Quaternion rotation = Quaternion.Euler(0, 0, angle);
 
             GameObject projectile = Instantiate(projectilePrefab, firePoint.position, rotation);
-            Projectile projScript = projectile.GetComponent<Projectile>();
+            bullet projScript = projectile.GetComponent<bullet>();
             if (projScript != null)
             {
                 Vector2 dir = new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad));
@@ -111,7 +111,7 @@ public class Weapon : MonoBehaviour
         Quaternion rotation = Quaternion.Euler(0, 0, angle);
 
         GameObject projectile = Instantiate(projectilePrefab, firePoint.position, rotation);
-        Projectile projScript = projectile.GetComponent<Projectile>();
+        bullet projScript = projectile.GetComponent<bullet>();
         if (projScript != null)
             projScript.SetDirection(direction);
     }

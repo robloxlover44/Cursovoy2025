@@ -71,9 +71,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponID: Shotgun
-  magazineCapacity: 8
+  magazineCapacity: 9
   currentAmmo: 0
-  totalAmmo: 80
+  totalAmmo: 81
   reloadTime: 3
   projectilePrefab: {fileID: 8557163692020594784, guid: 868d6fce80f688c48b651e929ec686fe, type: 3}
   firePoint: {fileID: 4434729934622055524}
