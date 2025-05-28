@@ -17,9 +17,9 @@ public class PlayerDataModel
 
     public PlayerDataModel()
     {
-        money = 1000;
+        money = 50;
         shards = 0;
-        maxHealth = 200;
+        maxHealth = 250;
         currentWeaponIndex = -1;
         portalEntryCount = 0;
         unlockedSkills = new List<string>();

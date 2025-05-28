@@ -5525,7 +5525,7 @@ MonoBehaviour:
   doors:
   - {fileID: 1420636952}
   - {fileID: 1130025475}
-  enemiesRoot: {fileID: 0}
+  enemiesRoot: {fileID: 1625302976}
   enemyTag: Enemy
 --- !u!61 &774907798
 BoxCollider2D:
@@ -6738,7 +6738,7 @@ PrefabInstance:
       objectReference: {fileID: 601584491}
     - target: {fileID: 1753226803889468565, guid: 90fa0cfc2ef5d2d45b95ef66bea7efac, type: 3}
       propertyPath: requiredShards
-      value: 115
+      value: 110
       objectReference: {fileID: 0}
     - target: {fileID: 1753226803889468565, guid: 90fa0cfc2ef5d2d45b95ef66bea7efac, type: 3}
       propertyPath: wirePuzzlePanel

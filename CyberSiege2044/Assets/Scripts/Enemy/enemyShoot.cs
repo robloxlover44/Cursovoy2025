@@ -17,8 +17,8 @@ public class TurretController : MonoBehaviour
     public float fireRate = 1f;
 
     [Header("Health Settings")]
-    public int maxHealth = 100;
-    private int currentHealth;
+    public float maxHealth = 100;
+    private float currentHealth;
 
     [Header("Death Animation Settings")]
     public Sprite[] deathAnimation;         // Массив кадров анимации смерти
@@ -129,7 +129,7 @@ public class TurretController : MonoBehaviour
         }
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         if (isDead) return;
         currentHealth -= damage;

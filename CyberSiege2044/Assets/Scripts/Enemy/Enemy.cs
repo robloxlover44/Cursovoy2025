@@ -46,7 +46,7 @@ public class ChaseEnemy : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private EnemyState currentState = EnemyState.Patrol;
     private Coroutine animationCoroutine;
-    private int currentHealth;
+    private float currentHealth;
     private int currentPatrolIndex = 0;
     private float currentFrameRate;
 
@@ -176,7 +176,7 @@ public class ChaseEnemy : MonoBehaviour
         }
     }
 
-    public void TakeDamage(int dmg)
+    public void TakeDamage(float dmg)
     {
         if (currentState == EnemyState.Exploding) return;
         currentHealth -= dmg;

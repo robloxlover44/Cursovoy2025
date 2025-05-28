@@ -3,7 +3,7 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     public float speed = 10f; // Скорость пули
-    public int damage = 50; // Урон, наносимый пулей, настраивается в инспекторе
+    public float damage = 0.1f; // Урон, наносимый пулей, настраивается в инспекторе
     private Vector2 direction;
 
     // Метод для задания направления движения пули

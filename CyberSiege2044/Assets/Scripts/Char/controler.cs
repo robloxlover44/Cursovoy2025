@@ -7,6 +7,7 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
+    
     public float moveSpeed = 5f;
     public float rotationSpeed = 200f;
     public SpriteRenderer spriteRenderer;
@@ -94,6 +95,9 @@ public class PlayerController : MonoBehaviour
             reloadHintText.gameObject.SetActive(false);
     }
 
+    
+
+
     void Update()
     {
         if (isDead) return;
@@ -106,15 +110,27 @@ public class PlayerController : MonoBehaviour
         Animate();
         RotateToMouse();
 
-        // --- ОБНОВЛЁННАЯ стрельба ---
-        if (Input.GetMouseButtonDown(0) && currentWeapon != null)
+                // --- Стрельба: поддержка Hold to Fire ---
+        if (currentWeapon != null)
+{
+    if (currentWeapon.IsLaserGun())
+    {
+        // Для лазерного оружия: зажатие = расход заряда, отображение процента
+        if (Input.GetMouseButton(0) && currentWeapon.HasCharge())
+        {
+            currentWeapon.FireLaser(transform.right);
+            UpdateAmmoUI();
+        }
+    }
+    else if (currentWeapon.IsAutoFireEnabled())
+    {
+        if (Input.GetMouseButton(0))
         {
             if (currentWeapon.GetCurrentAmmo() == 0 && !currentWeapon.IsReloading())
             {
                 StartCoroutine(ShowReloadHint());
                 return;
             }
-
             currentWeapon.Fire(transform.right);
             UpdateAmmoUI();
             if (currentWeapon.GetCurrentAmmo() <= 0)
@@ -122,6 +138,27 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine(ShakeAmmoText());
             }
         }
+    }
+    else
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (currentWeapon.GetCurrentAmmo() == 0 && !currentWeapon.IsReloading())
+            {
+                StartCoroutine(ShowReloadHint());
+                return;
+            }
+            currentWeapon.Fire(transform.right);
+            UpdateAmmoUI();
+            if (currentWeapon.GetCurrentAmmo() <= 0)
+            {
+                StartCoroutine(ShakeAmmoText());
+            }
+        }
+    }
+}
+
+
 
         // --- ОБНОВЛЁННАЯ перезарядка ---
         if (Input.GetKeyDown(KeyCode.R) && currentWeapon != null)
@@ -149,12 +186,19 @@ public class PlayerController : MonoBehaviour
     }
 
     void FixedUpdate()
-    {
-        if (dashController != null && dashController.IsDashing)
-            return;
+{
+    if (dashController != null && dashController.IsDashing)
+        return;
 
-        rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+    rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+
+    if (movement == Vector2.zero)
+    {
+        rb.linearVelocity = Vector2.zero;
     }
+}
+
+
 
     void Animate()
     {
@@ -225,8 +269,6 @@ public class PlayerController : MonoBehaviour
         rb.rotation = Mathf.MoveTowardsAngle(rb.rotation, targetAngle, rotationSpeed * Time.deltaTime);
     }
 
-    // *** УДАЛЕНО: UpdateCameraPosition и ShakeCamera ***
-    // Cinemachine теперь сама рулит MainCamera!
 
     public void SwitchWeapon(int index)
     {
@@ -253,19 +295,25 @@ public class PlayerController : MonoBehaviour
     }
 
     private void UpdateAmmoUI()
-    {
-        if (ammoText == null || currentWeapon == null)
-            return;
+{
+    if (ammoText == null || currentWeapon == null)
+        return;
 
-        if (currentWeapon.IsReloading())
-        {
-            ammoText.text = "//reloading.exe";
-        }
-        else
-        {
-            ammoText.text = $"{currentWeapon.GetCurrentAmmo()} / {currentWeapon.GetTotalAmmo()}";
-        }
+    if (currentWeapon.IsLaserGun())
+    {
+        float percent = currentWeapon.GetCurrentCharge() / currentWeapon.GetMaxCharge() * 100f;
+        ammoText.text = $"{percent:F0}%";
     }
+    else if (currentWeapon.IsReloading())
+    {
+        ammoText.text = "//reloading.exe";
+    }
+    else
+    {
+        ammoText.text = $"{currentWeapon.GetCurrentAmmo()} / {currentWeapon.GetTotalAmmo()}";
+    }
+}
+
 
     IEnumerator ShakeAmmoText()
     {

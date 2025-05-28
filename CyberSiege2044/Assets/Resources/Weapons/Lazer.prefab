@@ -34,6 +34,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5615746981846354562}
+  - {fileID: 4888837036676978350}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &4482304688298022210
@@ -71,13 +72,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponID: Lazer
-  magazineCapacity: 100
+  magazineCapacity: 3000
   currentAmmo: 0
-  totalAmmo: 100
+  totalAmmo: 3000
   reloadTime: 0
   projectilePrefab: {fileID: 8557163692020594784, guid: 1f8aa259afd4ae34e9ebe35f0f1e5763, type: 3}
-  firePoint: {fileID: 1774154278834459812}
+  firePoint: {fileID: 4888837036676978350}
   fireRate: 0.001
+  bulletsPerShot: 1
+  fanAngle: 30
+  holdToFire: 1
+  isLaserGun: 1
+  maxCharge: 100
+  chargeDrainPerSecond: 1
+  currentCharge: 100
 --- !u!114 &2706483563318257088
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -237,3 +245,34 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!1 &8702042676298121646
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4888837036676978350}
+  m_Layer: 0
+  m_Name: fp
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4888837036676978350
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8702042676298121646}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.135, y: 0.021, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1774154278834459812}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

@@ -73,11 +73,18 @@ MonoBehaviour:
   weaponID: Shotgun
   magazineCapacity: 8
   currentAmmo: 0
-  totalAmmo: 40
+  totalAmmo: 80
   reloadTime: 3
   projectilePrefab: {fileID: 8557163692020594784, guid: 868d6fce80f688c48b651e929ec686fe, type: 3}
   firePoint: {fileID: 4434729934622055524}
   fireRate: 0.5
+  bulletsPerShot: 3
+  fanAngle: 30
+  holdToFire: 0
+  isLaserGun: 0
+  maxCharge: 100
+  chargeDrainPerSecond: 30
+  currentCharge: 100
 --- !u!114 &6993456143805232744
 MonoBehaviour:
   m_ObjectHideFlags: 0
