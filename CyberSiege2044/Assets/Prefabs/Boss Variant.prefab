@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &755488929448501480
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 143438529858279532}
+  m_Layer: 13
+  m_Name: Firepoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &143438529858279532
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 755488929448501480}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.305, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1816619583845448057}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &5310971608548745858
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11,6 +42,18 @@ PrefabInstance:
     - target: {fileID: 2094086866555203534, guid: 8b2168f346a43c548a30f6c4f80c334b, type: 3}
       propertyPath: m_Name
       value: Boss Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 2795939369423408179, guid: 8b2168f346a43c548a30f6c4f80c334b, type: 3}
+      propertyPath: m_Radius
+      value: 2.900242
+      objectReference: {fileID: 0}
+    - target: {fileID: 2795939369423408179, guid: 8b2168f346a43c548a30f6c4f80c334b, type: 3}
+      propertyPath: m_Offset.x
+      value: -0.0061975275
+      objectReference: {fileID: 0}
+    - target: {fileID: 2795939369423408179, guid: 8b2168f346a43c548a30f6c4f80c334b, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5801112859301354491, guid: 8b2168f346a43c548a30f6c4f80c334b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -55,6 +98,52 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 7468569010105070781, guid: 8b2168f346a43c548a30f6c4f80c334b, type: 3}
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 5801112859301354491, guid: 8b2168f346a43c548a30f6c4f80c334b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 143438529858279532}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2094086866555203534, guid: 8b2168f346a43c548a30f6c4f80c334b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1352348089595457871}
   m_SourcePrefab: {fileID: 100100000, guid: 8b2168f346a43c548a30f6c4f80c334b, type: 3}
+--- !u!4 &1816619583845448057 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5801112859301354491, guid: 8b2168f346a43c548a30f6c4f80c334b, type: 3}
+  m_PrefabInstance: {fileID: 5310971608548745858}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6105733629951790412 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2094086866555203534, guid: 8b2168f346a43c548a30f6c4f80c334b, type: 3}
+  m_PrefabInstance: {fileID: 5310971608548745858}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1352348089595457871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6105733629951790412}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8fd301e0076e764ca8496aa948955c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  firePoint: {fileID: 143438529858279532}
+  bulletPrefab: {fileID: 8557163692020594784, guid: d067d26a61302994992c1498ac8c8b79, type: 3}
+  maxHealth: 1000
+  fireRate: 1
+  bulletSpeed: 7
+  waveBulletCount: 16
+  waveCooldown: 5
+  dashCooldown: 4
+  dashSpeed: 14
+  dashDuration: 0.25
+  dashWarningTime: 0.7
+  dashIndicatorPrefab: {fileID: 6860370524985223283, guid: 16e4848b4202bc64fa45756ac0415b99, type: 3}
+  triggerZone: {fileID: 8032575109941735089}
+--- !u!58 &8032575109941735089 stripped
+CircleCollider2D:
+  m_CorrespondingSourceObject: {fileID: 2795939369423408179, guid: 8b2168f346a43c548a30f6c4f80c334b, type: 3}
+  m_PrefabInstance: {fileID: 5310971608548745858}
+  m_PrefabAsset: {fileID: 0}

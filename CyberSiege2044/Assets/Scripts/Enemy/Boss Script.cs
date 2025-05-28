@@ -12,7 +12,7 @@ public class BossEnemy : MonoBehaviour
     private int currentHealth;
 
     [Header("Shooting")]
-    public float fireRate = 1f;         // ������� �������� (��� � �������� �����)
+    public float fireRate = 1f;
     public float bulletSpeed = 7f;
     private float nextFireTime = 0f;
 
@@ -22,10 +22,15 @@ public class BossEnemy : MonoBehaviour
 
     [Header("Dash Attack")]
     public float dashCooldown = 4f;
-    public float dashSpeed = 14f;
     public float dashDuration = 0.25f;
     public float dashWarningTime = 0.7f;
     public GameObject dashIndicatorPrefab;
+
+    [Header("Sound FX")]
+    public AudioClip shootSfx;
+    public AudioClip ultSfx;
+    public AudioClip dashSfx;
+    public AudioSource audioSource; // назначь сюда AudioSource в инспекторе
 
     [Header("Other")]
     public Collider2D triggerZone;
@@ -35,6 +40,8 @@ public class BossEnemy : MonoBehaviour
     private Rigidbody2D rb;
     private bool isDashing;
 
+    private Vector2 lastPlayerPos;
+
     void Start()
     {
         currentHealth = maxHealth;
@@ -43,18 +50,19 @@ public class BossEnemy : MonoBehaviour
         if (triggerZone == null)
             triggerZone = GetComponent<Collider2D>();
         triggerZone.isTrigger = true;
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
     {
-        // ��� � �������� �����: ������ �������������� � ������, ���� �� � ����
+        // Поворот к игроку и стрельба (обычный режим)
         if (playerInZone && player != null && !isDashing)
         {
             Vector2 dir = (player.position - transform.position).normalized;
             float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0, 0, angle);
 
-            // �������� ��� � �������� �����
             if (Time.time >= nextFireTime)
             {
                 Shoot(dir);
@@ -75,21 +83,25 @@ public class BossEnemy : MonoBehaviour
 
     void Shoot(Vector2 dir)
     {
-        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.Euler(0, 0, angle));
         var proj = bullet.GetComponent<Projectile>();
         if (proj != null)
             proj.SetDirection(dir);
 
-        // ���� � ���� ���� Rigidbody2D � �� ������ ������ ����� ������ velocity
         var rb2d = bullet.GetComponent<Rigidbody2D>();
         if (rb2d != null)
             rb2d.linearVelocity = dir * bulletSpeed;
+
+        // Звук выстрела
+        if (shootSfx != null && audioSource != null)
+            audioSource.PlayOneShot(shootSfx);
     }
 
-    // --- ����� ���� (�����) ---
+    // --- Волна пуль (ультимейт) ---
     IEnumerator WaveAttackRoutine()
     {
-        yield return new WaitForSeconds(1f); // ��������� �������� ����� �����������
+        yield return new WaitForSeconds(1f);
         while (playerInZone && currentHealth > 0)
         {
             yield return new WaitForSeconds(waveCooldown);
@@ -98,6 +110,10 @@ public class BossEnemy : MonoBehaviour
     }
     void FireBulletWave()
     {
+        // Звук ульты
+        if (ultSfx != null && audioSource != null)
+            audioSource.PlayOneShot(ultSfx);
+
         float step = 360f / waveBulletCount;
         for (int i = 0; i < waveBulletCount; i++)
         {
@@ -111,7 +127,7 @@ public class BossEnemy : MonoBehaviour
         }
     }
 
-    // --- ����� ---
+    // --- Рывок ---
     IEnumerator DashRoutine()
     {
         while (playerInZone && currentHealth > 0)
@@ -119,36 +135,56 @@ public class BossEnemy : MonoBehaviour
             yield return new WaitForSeconds(dashCooldown);
 
             GameObject dashIndicator = null;
-            Vector2 dashDir = (player.position - transform.position).normalized;
+            DashIndicator indicatorScript = null;
 
+            // Создаём индикатор один раз до зарядки
             if (dashIndicatorPrefab)
             {
                 dashIndicator = Instantiate(dashIndicatorPrefab);
-                var indicatorScript = dashIndicator.GetComponent<DashIndicator>();
+                indicatorScript = dashIndicator.GetComponent<DashIndicator>();
                 if (indicatorScript != null)
                     indicatorScript.Init(transform, player);
             }
 
-            yield return new WaitForSeconds(dashWarningTime);
+            // Зарядка: обновляем позицию игрока и линию каждый кадр
+            float timer = 0f;
+            while (timer < dashWarningTime)
+            {
+                if (player != null)
+                    lastPlayerPos = player.position; // Сохраняем последнюю позицию
+
+                if (indicatorScript != null)
+                    indicatorScript.Init(transform, player);
+
+                timer += Time.deltaTime;
+                yield return null;
+            }
 
             if (dashIndicator)
                 Destroy(dashIndicator);
 
-            yield return StartCoroutine(DoDash(dashDir));
+            // Звук рывка
+            if (dashSfx != null && audioSource != null)
+                audioSource.PlayOneShot(dashSfx);
+
+            // Рывок строго до lastPlayerPos!
+            yield return StartCoroutine(DoDash());
         }
     }
-    IEnumerator DoDash(Vector2 dashDir)
+    IEnumerator DoDash()
     {
         isDashing = true;
         float elapsed = 0f;
         Vector2 start = rb.position;
-        Vector2 end = start + dashDir * dashSpeed * dashDuration;
+        Vector2 end = lastPlayerPos;
+
         while (elapsed < dashDuration)
         {
             rb.MovePosition(Vector2.Lerp(start, end, elapsed / dashDuration));
             elapsed += Time.fixedDeltaTime;
             yield return new WaitForFixedUpdate();
         }
+        rb.MovePosition(end);
         isDashing = false;
     }
 
