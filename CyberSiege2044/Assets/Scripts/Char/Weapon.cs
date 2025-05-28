@@ -36,6 +36,8 @@ public class Weapon : MonoBehaviour
     private bool isReloading = false;
     private bool isFiringLaser = false;
 
+    private Coroutine reloadCoroutine; // для отмены перезарядки
+
     void Start()
     {
         if (isLaserGun)
@@ -117,7 +119,9 @@ public class Weapon : MonoBehaviour
     public void Reload()
     {
         if (!isLaserGun && !isReloading)
-            StartCoroutine(ReloadCoroutine());
+        {
+            reloadCoroutine = StartCoroutine(ReloadCoroutine());
+        }
     }
 
     IEnumerator ReloadCoroutine()
@@ -139,6 +143,17 @@ public class Weapon : MonoBehaviour
         }
         isReloading = false;
         Debug.Log($"Перезарядка завершена: {currentAmmo} в магазине, {totalAmmo} в запасе");
+    }
+
+    // --- Новый метод для сброса релоада ---
+    public void CancelReload()
+    {
+        if (isReloading && reloadCoroutine != null)
+        {
+            StopCoroutine(reloadCoroutine);
+            isReloading = false;
+            reloadCoroutine = null;
+        }
     }
 
     // --- Методы для доступа из PlayerController ---

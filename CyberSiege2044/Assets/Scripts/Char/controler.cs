@@ -185,17 +185,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
+void FixedUpdate()
 {
     if (dashController != null && dashController.IsDashing)
         return;
 
-    rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+    Vector2 targetPos = rb.position + movement * moveSpeed * Time.fixedDeltaTime;
+    rb.MovePosition(targetPos);
 
-    if (movement == Vector2.zero)
-    {
-        rb.linearVelocity = Vector2.zero;
-    }
+    // ВСЕГДА стопим velocity для ручного управления
+    rb.linearVelocity = Vector2.zero;
 }
 
 
@@ -270,29 +269,34 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    public void SwitchWeapon(int index)
+   public void SwitchWeapon(int index)
+{
+    if (index < 0 || index >= inventoryWeaponObjects.Count)
+        return;
+
+    if (currentWeaponObject != null)
     {
-        if (index < 0 || index >= inventoryWeaponObjects.Count)
-            return;
+        // <--- ДОБАВЬ ЭТУ СТРОЧКУ!
+        currentWeaponObject.GetComponent<Weapon>().CancelReload();
 
-        if (currentWeaponObject != null)
-            currentWeaponObject.SetActive(false);
-
-        currentWeaponObject = inventoryWeaponObjects[index];
-        currentWeaponObject.SetActive(true);
-        currentWeapon = currentWeaponObject.GetComponent<Weapon>();
-        currentWeaponIndex = index;
-
-        PlayerDataManager.Instance.SetCurrentWeaponIndex(index);
-
-        InventoryUI inventoryUI = FindObjectOfType<InventoryUI>();
-        if (inventoryUI != null)
-        {
-            inventoryUI.HighlightActiveWeapon(index);
-        }
-
-        UpdateAmmoUI();
+        currentWeaponObject.SetActive(false);
     }
+
+    currentWeaponObject = inventoryWeaponObjects[index];
+    currentWeaponObject.SetActive(true);
+    currentWeapon = currentWeaponObject.GetComponent<Weapon>();
+    currentWeaponIndex = index;
+
+    PlayerDataManager.Instance.SetCurrentWeaponIndex(index);
+
+    InventoryUI inventoryUI = FindObjectOfType<InventoryUI>();
+    if (inventoryUI != null)
+    {
+        inventoryUI.HighlightActiveWeapon(index);
+    }
+
+    UpdateAmmoUI();
+}
 
     private void UpdateAmmoUI()
 {

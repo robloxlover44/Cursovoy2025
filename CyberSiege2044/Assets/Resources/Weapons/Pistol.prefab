@@ -73,11 +73,18 @@ MonoBehaviour:
   weaponID: Pistol
   magazineCapacity: 10
   currentAmmo: 0
-  totalAmmo: 50
-  reloadTime: 2
+  totalAmmo: 100
+  reloadTime: 1
   projectilePrefab: {fileID: 8557163692020594784, guid: 652a29263be94a241ada77c869618486, type: 3}
   firePoint: {fileID: 1774154278834459812}
   fireRate: 0.5
+  bulletsPerShot: 1
+  fanAngle: 30
+  holdToFire: 0
+  isLaserGun: 0
+  maxCharge: 100
+  chargeDrainPerSecond: 30
+  currentCharge: 100
 --- !u!114 &2706483563318257088
 MonoBehaviour:
   m_ObjectHideFlags: 0
