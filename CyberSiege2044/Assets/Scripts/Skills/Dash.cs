@@ -1,7 +1,6 @@
 using System.Collections;
 using UnityEngine;
 
-// Скрипт отвечает за механику рывка (Dash) с простым включением/отключением GameObject частиц
 public class DashController : MonoBehaviour
 {
     [Header("Skill Settings")]
@@ -24,20 +23,15 @@ public class DashController : MonoBehaviour
     private float _nextAvailableTime = 0f;
     private bool _isDashing = false;
 
-    /// <summary>Флаг, показывающий, что сейчас идёт рывок</summary>
     public bool IsDashing => _isDashing;
-    /// <summary>Оставшееся время кулдауна (0 если готов)</summary>
     public float CooldownRemaining => Mathf.Max(0f, _nextAvailableTime - Time.time);
-    /// <summary>Полная длительность кулдауна</summary>
     public float CooldownDuration => cooldown;
 
     private void Awake()
     {
-        // Находим Rigidbody2D и PlayerController у родителя (игрока)
         _rb = GetComponentInParent<Rigidbody2D>();
         _playerCtrl = GetComponentInParent<PlayerController>();
 
-        // Отключаем объект частиц при старте
         if (dashParticlesObject != null)
             dashParticlesObject.SetActive(false);
     }
@@ -49,11 +43,9 @@ public class DashController : MonoBehaviour
 
         if (Input.GetKeyDown(dashKey))
         {
-            // Принудительная разблокировка навыка (для тестирования)
             if (forceUnlock)
                 PlayerDataManager.Instance.UnlockSkill(skillID);
 
-            // Проверяем доступность рывка
             if (Time.time >= _nextAvailableTime && PlayerDataManager.Instance.IsSkillUnlocked(skillID))
             {
                 _nextAvailableTime = Time.time + cooldown;
@@ -67,36 +59,47 @@ public class DashController : MonoBehaviour
     }
 
     private IEnumerator PerformDash()
+{
+    _isDashing = true;
+
+    Vector2 dashDir = Vector2.right;
+    if (_playerCtrl != null && _playerCtrl.LastMovementDirection.sqrMagnitude > 0f)
+        dashDir = _playerCtrl.LastMovementDirection.normalized;
+
+    Vector2 startPos = _rb.position;
+    Vector2 intendedTarget = startPos + dashDir * dashDistance;
+
+    // Главное отличие: используем Raycast с маленьким сдвигом старта
+    Vector2 rayStart = startPos + dashDir * 0.01f; // чуть вперед, чтобы не застревать в стене
+    float dashLen = Vector2.Distance(rayStart, intendedTarget);
+
+    int wallMask = LayerMask.GetMask("Wall"); // Имя слоя стен!
+    RaycastHit2D hit = Physics2D.Raycast(rayStart, dashDir, dashLen, wallMask);
+
+    Vector2 dashTarget = intendedTarget;
+    if (hit.collider != null)
     {
-        _isDashing = true;
-
-        // Определяем направление рывка: последнее движение или вправо по умолчанию
-        Vector2 dashDir = Vector2.right;
-        if (_playerCtrl != null && _playerCtrl.LastMovementDirection.sqrMagnitude > 0f)
-            dashDir = _playerCtrl.LastMovementDirection.normalized;
-
-        Vector2 startPos = _rb.position;
-        Vector2 targetPos = startPos + dashDir * dashDistance;
-
-        // Включаем GameObject частиц
-        if (dashParticlesObject != null)
-            dashParticlesObject.SetActive(true);
-
-        // Плавное перемещение за dashDuration
-        float elapsed = 0f;
-        while (elapsed < dashDuration)
-        {
-            float t = elapsed / dashDuration;
-            _rb.MovePosition(Vector2.Lerp(startPos, targetPos, t));
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-        _rb.MovePosition(targetPos);
-
-        // Отключаем GameObject частиц
-        if (dashParticlesObject != null)
-            dashParticlesObject.SetActive(false);
-
-        _isDashing = false;
+        dashTarget = hit.point;
+        // Debug.Log($"Игрок dash остановлен у стены: {hit.collider.name} {hit.point}");
     }
+
+    if (dashParticlesObject != null)
+        dashParticlesObject.SetActive(true);
+
+    float elapsed = 0f;
+    while (elapsed < dashDuration)
+    {
+        float t = elapsed / dashDuration;
+        _rb.MovePosition(Vector2.Lerp(startPos, dashTarget, t));
+        elapsed += Time.fixedDeltaTime;
+        yield return new WaitForFixedUpdate();
+    }
+    _rb.MovePosition(dashTarget);
+
+    if (dashParticlesObject != null)
+        dashParticlesObject.SetActive(false);
+
+    _isDashing = false;
+}
+
 }

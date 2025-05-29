@@ -52,20 +52,21 @@ public class CameraShakeTrigger : MonoBehaviour
     }
 
     System.Collections.IEnumerator ShakeRoutine()
-    {
-        // Включаем тряску
-        perlin.AmplitudeGain = shakeAmplitude;
-        perlin.FrequencyGain = shakeFrequency;
+{
+    // Включаем тряску
+    perlin.AmplitudeGain = shakeAmplitude;
+    perlin.FrequencyGain = shakeFrequency;
 
-        // Воспроизводим звук
-        if (audioSource != null && shakeSfx != null)
-            audioSource.PlayOneShot(shakeSfx);
+    // Воспроизводим звук с учётом громкости AudioSource!
+    if (audioSource != null && shakeSfx != null)
+        audioSource.PlayOneShot(shakeSfx, audioSource.volume);
 
-        // Ждём заданное время
-        yield return new WaitForSeconds(shakeDuration);
+    // Ждём заданное время
+    yield return new WaitForSeconds(shakeDuration);
 
-        // Возвращаем значения обратно
-        perlin.AmplitudeGain = originalAmplitude;
-        perlin.FrequencyGain = originalFrequency;
-    }
+    // Возвращаем значения обратно
+    perlin.AmplitudeGain = originalAmplitude;
+    perlin.FrequencyGain = originalFrequency;
+}
+
 }
