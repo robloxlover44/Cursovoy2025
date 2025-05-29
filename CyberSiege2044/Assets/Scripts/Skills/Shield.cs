@@ -9,6 +9,7 @@ public class ShieldController : MonoBehaviour
     [Tooltip("ID пассивного навыка")]
     public string skillID = "Shield";
 
+
     [Header("Debug")]
     [Tooltip("Принудительно разблокировать щит в инспекторе")]
     public bool forceUnlock = false;
@@ -66,6 +67,8 @@ public class ShieldController : MonoBehaviour
     {
         if (!Application.isPlaying || _isBreaking)
             return;
+        if (Time.timeScale == 0f) return;
+
 
         if (Input.GetKeyDown(activationKey))
         {

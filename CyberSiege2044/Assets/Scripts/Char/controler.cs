@@ -38,6 +38,10 @@ public class PlayerController : MonoBehaviour
     public float deathAnimationSpeed = 0.2f;
     public Weapon currentWeapon;
 
+    [Header("Аудио")]
+    public AudioSource footstepsSource;
+    public AudioClip footstepsClip;
+
     [Header("UI Settings")]
     public TMP_Text ammoText;
     public TMP_Text reloadHintText;
@@ -46,6 +50,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+
         rb = GetComponent<Rigidbody2D>();
         dashController = GetComponentInChildren<DashController>();
         mainCamera = Camera.main;
@@ -86,6 +91,13 @@ public class PlayerController : MonoBehaviour
 
         if (reloadHintText != null)
             reloadHintText.gameObject.SetActive(false);
+
+        if (footstepsSource != null)
+        {
+            footstepsSource.clip = footstepsClip;
+            footstepsSource.loop = true;
+            footstepsSource.playOnAwake = false;
+        }
     }
 
     void OnEnable()
@@ -100,10 +112,26 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (Time.timeScale == 0f)
+        {
+            if (footstepsSource != null && footstepsSource.isPlaying)
+                footstepsSource.Stop();
+            return;
+        }
+
         if (isDead) return;
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
         isMoving = movement.sqrMagnitude > 0;
+
+        if (footstepsSource != null && footstepsClip != null)
+        {
+            if (isMoving && !footstepsSource.isPlaying)
+                footstepsSource.Play();
+            else if (!isMoving && footstepsSource.isPlaying)
+                footstepsSource.Stop();
+        }
+
         if (movement.sqrMagnitude > 0f)
             lastDirection = movement.normalized;
 

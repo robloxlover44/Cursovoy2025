@@ -776,6 +776,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 349169364261149633, guid: 95f1e56f75ec89d429faaa038acf44c9, type: 3}
+      propertyPath: m_text
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2110604293533712819, guid: 95f1e56f75ec89d429faaa038acf44c9, type: 3}
+      propertyPath: m_text
+      value: 65
+      objectReference: {fileID: 0}
     - target: {fileID: 4689453077875843778, guid: 95f1e56f75ec89d429faaa038acf44c9, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -863,6 +871,10 @@ PrefabInstance:
     - target: {fileID: 8373806839158207598, guid: 95f1e56f75ec89d429faaa038acf44c9, type: 3}
       propertyPath: m_Name
       value: Panels
+      objectReference: {fileID: 0}
+    - target: {fileID: 8911659166357282672, guid: 95f1e56f75ec89d429faaa038acf44c9, type: 3}
+      propertyPath: m_text
+      value: 75
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -48,8 +48,10 @@ MonoBehaviour:
   - LEVEL1
   - LEVEL2
   - LEVEL3
+  - LEVEL Boss
   checkpointScenes:
   - tutorial
   - LEVEL1
   - LEVEL2
   - LEVEL3
+  - LEVEL Boss

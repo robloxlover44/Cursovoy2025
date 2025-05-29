@@ -40,6 +40,7 @@ public class DashController : MonoBehaviour
     {
         if (!Application.isPlaying || _isDashing)
             return;
+        if (Time.timeScale == 0f) return;
 
         if (Input.GetKeyDown(dashKey))
         {

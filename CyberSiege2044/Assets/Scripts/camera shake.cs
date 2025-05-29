@@ -15,11 +15,18 @@ public class CameraShakeTrigger : MonoBehaviour
 
     [Header("Аудиоэффект")]
     public AudioClip shakeSfx;
+    public AudioClip shakeSfx2;  // Второй звук
     public AudioSource audioSource; // перетащи сюда аудиосорс
+
+    [Header("Ссылка на босса")]
+    public BossEnemy boss;
 
     private CinemachineBasicMultiChannelPerlin perlin;
     private float originalAmplitude;
     private float originalFrequency;
+
+    private bool isShaking = false;
+    private Collider2D myCollider;
 
     void Start()
     {
@@ -40,34 +47,61 @@ public class CameraShakeTrigger : MonoBehaviour
 
         if (audioSource == null)
             audioSource = GetComponent<AudioSource>();
+
+        myCollider = GetComponent<Collider2D>();
+        if (myCollider == null)
+            Debug.LogError("На объекте нет Collider2D!");
+
+        if (boss == null)
+            boss = FindObjectOfType<BossEnemy>();
+    }
+
+    void Update()
+    {
+        // Если босс погиб — больше не играем второй звук
+        if (boss == null || boss.CurrentHealth <= 0f)
+        {
+            shakeSfx2 = null;
+        }
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && !isShaking)
         {
             StopAllCoroutines();
             StartCoroutine(ShakeRoutine());
         }
     }
 
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Player") && myCollider != null)
+        {
+            myCollider.enabled = false;
+        }
+    }
+
     System.Collections.IEnumerator ShakeRoutine()
-{
-    // Включаем тряску
-    perlin.AmplitudeGain = shakeAmplitude;
-    perlin.FrequencyGain = shakeFrequency;
+    {
+        isShaking = true;
 
-    // Воспроизводим звук с учётом громкости AudioSource!
-    if (audioSource != null && shakeSfx != null)
-        audioSource.PlayOneShot(shakeSfx, audioSource.volume);
-        
+        perlin.AmplitudeGain = shakeAmplitude;
+        perlin.FrequencyGain = shakeFrequency;
 
-    // Ждём заданное время
-    yield return new WaitForSeconds(shakeDuration);
+        if (audioSource != null)
+        {
+            if (shakeSfx != null)
+                audioSource.PlayOneShot(shakeSfx, audioSource.volume);
+            if (shakeSfx2 != null)
+                audioSource.PlayOneShot(shakeSfx2, audioSource.volume);
+        }
 
-    // Возвращаем значения обратно
-    perlin.AmplitudeGain = originalAmplitude;
-    perlin.FrequencyGain = originalFrequency;
-}
+        yield return new WaitForSeconds(shakeDuration);
 
+        perlin.AmplitudeGain = originalAmplitude;
+        perlin.FrequencyGain = originalFrequency;
+
+        isShaking = false;
+    }
 }

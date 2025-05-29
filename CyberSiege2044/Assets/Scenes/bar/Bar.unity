@@ -2442,9 +2442,9 @@ AudioSource:
   m_audioClip: {fileID: 8300000, guid: f5d1ed63e1da9164b8f15d626f04c807, type: 3}
   m_Resource: {fileID: 8300000, guid: f5d1ed63e1da9164b8f15d626f04c807, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.2
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
