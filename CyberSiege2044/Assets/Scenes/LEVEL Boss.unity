@@ -130,7 +130,6 @@ GameObject:
   - component: {fileID: 47329914}
   - component: {fileID: 47329917}
   - component: {fileID: 47329916}
-  - component: {fileID: 47329915}
   m_Layer: 5
   m_Name: Fill
   m_TagString: Untagged
@@ -157,22 +156,6 @@ RectTransform:
   m_AnchoredPosition: {x: -6.776474, y: 0}
   m_SizeDelta: {x: 21.997, y: 0}
   m_Pivot: {x: 0, y: 0.5}
---- !u!114 &47329915
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 47329913}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d413a31482f76f4787eb5ce83180dc1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  boss: {fileID: 0}
-  healthSlider: {fileID: 0}
-  backgroundRect: {fileID: 0}
-  fillRect: {fileID: 0}
 --- !u!114 &47329916
 MonoBehaviour:
   m_ObjectHideFlags: 0
