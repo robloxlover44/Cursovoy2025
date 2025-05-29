@@ -2538,7 +2538,7 @@ MonoBehaviour:
   shakeSfx: {fileID: 8300000, guid: b96762b5b391a4942bd513c0bc99cce4, type: 3}
   shakeSfx2: {fileID: 8300000, guid: c8d00bafad1ca6449b2f24b0eccc8f91, type: 3}
   audioSource: {fileID: 880798335}
-  boss: {fileID: 0}
+  boss: {fileID: 1580537168}
 --- !u!61 &880798337
 BoxCollider2D:
   m_ObjectHideFlags: 0
