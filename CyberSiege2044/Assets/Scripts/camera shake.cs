@@ -60,6 +60,7 @@ public class CameraShakeTrigger : MonoBehaviour
     // Воспроизводим звук с учётом громкости AudioSource!
     if (audioSource != null && shakeSfx != null)
         audioSource.PlayOneShot(shakeSfx, audioSource.volume);
+        
 
     // Ждём заданное время
     yield return new WaitForSeconds(shakeDuration);
