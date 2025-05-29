@@ -1,21 +1,26 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class RGFX : MonoBehaviour
 {
-    [Header("Настройки времени")]
-    [Tooltip("Минимальное время между включением эффекта")]
+    [Header("РќР°СЃС‚СЂРѕР№РєРё РІСЂРµРјРµРЅРё")]
+    [Tooltip("РњРёРЅРёРјР°Р»СЊРЅРѕРµ РІСЂРµРјСЏ РјРµР¶РґСѓ РІРєР»СЋС‡РµРЅРёРµРј СЌС„С„РµРєС‚Р°")]
     public float minInterval = 5f;
 
-    [Tooltip("Максимальное время между включением эффекта")]
+    [Tooltip("РњР°РєСЃРёРјР°Р»СЊРЅРѕРµ РІСЂРµРјСЏ РјРµР¶РґСѓ РІРєР»СЋС‡РµРЅРёРµРј СЌС„С„РµРєС‚Р°")]
     public float maxInterval = 15f;
 
-    [Tooltip("Продолжительность эффекта")]
+    [Tooltip("РџСЂРѕРґРѕР»Р¶РёС‚РµР»СЊРЅРѕСЃС‚СЊ СЌС„С„РµРєС‚Р°")]
     public float glitchDuration = 3f;
 
-    [Header("Объект с эффектом")]
-    [Tooltip("Ссылка на Global Volume объект")]
+    [Header("РћР±СЉРµРєС‚ СЃ СЌС„С„РµРєС‚РѕРј")]
+    [Tooltip("РЎСЃС‹Р»РєР° РЅР° Global Volume РѕР±СЉРµРєС‚")]
     public GameObject globalVolume;
+
+    [Header("РљР°СЂС‚РёРЅРєРё РґР»СЏ РѕС‚РєР»СЋС‡РµРЅРёСЏ РІРѕ РІСЂРµРјСЏ РіР»РёС‚С‡Р°")]
+    public Image imageToDisable1;
+    public Image imageToDisable2;
 
     private Coroutine glitchCoroutine;
 
@@ -23,14 +28,14 @@ public class RGFX : MonoBehaviour
     {
         if (globalVolume == null)
         {
-            Debug.LogError("Не назначен объект Global Volume!");
+            Debug.LogError("РќРµ РЅР°Р·РЅР°С‡РµРЅ РѕР±СЉРµРєС‚ Global Volume!");
             return;
         }
 
-        // Убедитесь, что эффект отключен в начале
+        // РЈР±РµРґРёС‚РµСЃСЊ, С‡С‚Рѕ СЌС„С„РµРєС‚ РѕС‚РєР»СЋС‡РµРЅ РІ РЅР°С‡Р°Р»Рµ
         globalVolume.SetActive(false);
 
-        // Запускаем цикл случайного включения эффекта
+        // Р—Р°РїСѓСЃРєР°РµРј С†РёРєР» СЃР»СѓС‡Р°Р№РЅРѕРіРѕ РІРєР»СЋС‡РµРЅРёСЏ СЌС„С„РµРєС‚Р°
         glitchCoroutine = StartCoroutine(GlitchCycle());
     }
 
@@ -38,18 +43,29 @@ public class RGFX : MonoBehaviour
     {
         while (true)
         {
-            // Ждем случайное время перед включением эффекта
+            // Р–РґРµРј СЃР»СѓС‡Р°Р№РЅРѕРµ РІСЂРµРјСЏ РїРµСЂРµРґ РІРєР»СЋС‡РµРЅРёРµРј СЌС„С„РµРєС‚Р°
             float randomInterval = Random.Range(minInterval, maxInterval);
             yield return new WaitForSeconds(randomInterval);
 
-            // Включаем эффект
+            // Р’РєР»СЋС‡Р°РµРј СЌС„С„РµРєС‚
             globalVolume.SetActive(true);
 
-            // Держим эффект включенным в течение glitchDuration
+            // РћС‚РєР»СЋС‡Р°РµРј РёР·РѕР±СЂР°Р¶РµРЅРёСЏ
+            if (imageToDisable1 != null)
+                imageToDisable1.gameObject.SetActive(false);
+            if (imageToDisable2 != null)
+                imageToDisable2.gameObject.SetActive(false);
+
+            // Р”РµСЂР¶РёРј СЌС„С„РµРєС‚ РІРєР»СЋС‡РµРЅРЅС‹Рј РІ С‚РµС‡РµРЅРёРµ glitchDuration
             yield return new WaitForSeconds(glitchDuration);
 
-            // Выключаем эффект
+            // РћС‚РєР°С‚С‹РІР°РµРј РѕР±СЂР°С‚РЅРѕ
             globalVolume.SetActive(false);
+
+            if (imageToDisable1 != null)
+                imageToDisable1.gameObject.SetActive(true);
+            if (imageToDisable2 != null)
+                imageToDisable2.gameObject.SetActive(true);
         }
     }
 

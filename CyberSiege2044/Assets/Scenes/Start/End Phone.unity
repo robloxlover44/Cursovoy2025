@@ -997,7 +997,7 @@ MonoBehaviour:
   lensDistortionIncreaseSpeed: 1
   lensDistortionDecreaseSpeed: 1
   fadeDuration: 1
-  nextSceneName: Menu
+  nextSceneName: Clear menu
 --- !u!114 &543066214
 MonoBehaviour:
   m_ObjectHideFlags: 0
